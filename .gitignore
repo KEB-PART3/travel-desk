@@ -1,0 +1,14 @@
+# Your real trip data — never committed.
+trips.json
+
+# Build output
+dist/
+
+# Cloudflare / wrangler local state
+.wrangler/
+
+# Python
+__pycache__/
+
+# Node
+node_modules/

@@ -1,0 +1,1170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f6f1e2">
+<meta name="description" content="Every upcoming trip in one place.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Travel Desk">
+<style>
+  html,body{margin:0}
+  :root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+  img{max-width:100%}
+  [hidden]{display:none!important}
+</style>
+<title>Travel Desk</title>
+<style>
+/* ============ Cream & Gold — light (the primary theme) ============ */
+:root{
+  --bg:#f6f1e2; --bg-2:#ede5cf;
+  --card:#fffdf4; --card-2:#f5eeda; --line:#dcd2b6;
+  --text:#251e0d; --text-2:#4a4331; --muted:#6b6149;
+  --gold:#7f5e05; --gold-2:#7c5c07; --gold-3:#5f4605;
+  --green:#1a6e34; --red:#c22f22; --blue:#2f5faf; --rust:#a3441c;
+  --btn-hi:#ffd84a; --btn-lo:#b8860b;
+  --v-storm:#2f5faf; --v-hot:#a3441c; --v-rain:#33648f; --v-nice:#1a6e34; --v-warm:#8f6a06;
+  --shadow:0 6px 24px rgba(90,74,30,.10);
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+/* ============ warm dark — hand-made, not inverted ============ */
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0a0a0a; --bg-2:#14110a;
+    --card:#1d1a12; --card-2:#272214; --line:#4d4227;
+    --text:#f2f0e6; --text-2:#d8d3c2; --muted:#928a72;
+    --gold:#f5c518; --gold-2:#ffd84a; --gold-3:#b8860b;
+    --green:#6dd57a; --red:#ff4d4d; --blue:#8fb8ff; --rust:#ff7a4d;
+    --v-storm:#8fb8ff; --v-hot:#ff7a4d; --v-rain:#9fd0ff; --v-nice:#6dd57a; --v-warm:#ffd84a;
+    --shadow:0 6px 24px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0a0a0a; --bg-2:#14110a;
+  --card:#1d1a12; --card-2:#272214; --line:#4d4227;
+  --text:#f2f0e6; --text-2:#d8d3c2; --muted:#928a72;
+  --gold:#f5c518; --gold-2:#ffd84a; --gold-3:#b8860b;
+  --green:#6dd57a; --red:#ff4d4d; --blue:#8fb8ff; --rust:#ff7a4d;
+  --v-storm:#8fb8ff; --v-hot:#ff7a4d; --v-rain:#9fd0ff; --v-nice:#6dd57a; --v-warm:#ffd84a;
+  --shadow:0 6px 24px rgba(0,0,0,.35);
+}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--text-2);font-family:var(--font);
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:940px;margin:0 auto;padding-inline:20px;padding-block:0 64px}
+@media (max-width:520px){.wrap{padding-inline:16px}}
+a{color:var(--gold-3)}
+h1,h2,h3{margin:0;text-wrap:balance}
+
+/* ============ masthead ============ */
+.masthead{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding-block:22px 18px;border-bottom:1px solid var(--line);margin-bottom:22px}
+.brand{font-weight:900;font-size:22px;letter-spacing:-.4px;color:var(--text)}
+.sync{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1.6px;font-weight:700}
+.sync b{color:var(--text-2)}
+
+/* ============ hero — gold number, heavy lead, quiet detail ============ */
+.hero{background:linear-gradient(180deg,var(--card),var(--card-2));
+  border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);
+  padding:20px 20px 18px;margin-bottom:24px}
+.hero-eyebrow{font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+  color:var(--gold);margin-bottom:10px}
+.hero-count{display:flex;align-items:center;gap:14px}
+.hero-num{font-size:44px;font-weight:900;color:var(--gold-2);line-height:1;
+  font-variant-numeric:tabular-nums}
+.hero-numwrap{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+.hero-nlbl{font-size:10px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;text-align:center;
+  color:var(--gold);margin-top:2px}
+.hero-id{min-width:0}
+.hero-name{font-size:20px;font-weight:900;color:var(--text);letter-spacing:-.2px;line-height:1.25}
+.hero-sub{color:var(--muted);font-size:14px;margin-top:3px}
+.hero-next{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);
+  display:flex;gap:10px;align-items:baseline}
+.hero-next-k{font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+  color:var(--gold);flex-shrink:0}
+.hero-next-v{font-size:15px;font-weight:700;color:var(--text)}
+.hero-days{display:flex;gap:8px;overflow-x:auto;margin:14px -20px -18px;padding:2px 20px 18px;
+  scroll-snap-type:x mandatory;scroll-padding-left:20px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.hero-days::-webkit-scrollbar{display:none}
+.hd{flex:0 0 auto;min-width:150px;scroll-snap-align:start;scroll-snap-stop:always;
+  background:var(--bg-2);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.hd-k{font-size:12px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--gold);margin-bottom:6px}
+.hd-l{font-size:13.5px;color:var(--text-2);line-height:1.6;display:block;
+  font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hd-l .t{color:var(--muted)}
+
+/* ============ tabs ============ */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:20px}
+.tab{appearance:none;background:none;border:0;border-bottom:2px solid transparent;
+  font:inherit;font-size:13.5px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;
+  color:var(--muted);padding:10px 14px;cursor:pointer;margin-bottom:-1px}
+.tab:hover{color:var(--text-2)}
+.tab[aria-selected="true"]{color:var(--text);border-bottom-color:var(--gold)}
+.tab:focus-visible{outline:2px solid var(--gold);outline-offset:-2px;border-radius:4px}
+.tab .badge{display:inline-block;margin-left:7px;background:var(--bg-2);color:var(--muted);
+  border:1px solid var(--line);border-radius:999px;padding:1px 7px;font-size:12px;
+  letter-spacing:0;font-variant-numeric:tabular-nums;font-weight:800}
+.tab .badge:not(.calm){color:var(--red);border-color:color-mix(in srgb,var(--red) 45%,transparent)}
+
+.sec-head{display:flex;align-items:baseline;gap:10px;margin:0 0 12px}
+.sec-head h2{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:800}
+.sec-head .count{font-size:13.5px;color:var(--muted)}
+.saved{margin-left:auto;font-size:12px;letter-spacing:.8px;text-transform:uppercase;font-weight:800;
+  color:var(--green);background:var(--bg-2);border:1px solid color-mix(in srgb,var(--green) 45%,transparent);
+  padding:3px 8px;border-radius:999px}
+section{margin-bottom:28px}
+
+/* ============ to-dos ============ */
+.todo{background:linear-gradient(180deg,var(--card),var(--card-2));border:1px solid var(--line);
+  border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+.todo-row{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-top:1px solid var(--line)}
+.todo-row:first-child{border-top:0}
+.tickbtn,.dropbtn{appearance:none;background:none;border:0;padding:0;font:inherit;cursor:pointer;flex-shrink:0}
+.tickbtn:focus-visible,.dropbtn:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:5px}
+.tick{width:17px;height:17px;border-radius:5px;border:1.5px solid var(--line);margin-top:3px;
+  display:grid;place-items:center;font-size:12px;color:transparent;background:var(--bg-2)}
+.todo-row.done .tick{background:var(--green);border-color:var(--green);color:#fffdf4}
+.todo-row.done .todo-text{text-decoration:line-through;color:var(--muted)}
+.todo-body{flex:1;min-width:0}
+.todo-text{font-size:16px;line-height:1.4;color:var(--text);font-weight:600}
+.todo-meta{font-size:13.5px;color:var(--muted);margin-top:3px;display:block}
+.todo-right{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-top:1px}
+.sev{font-size:11.5px;letter-spacing:.7px;text-transform:uppercase;font-weight:800;
+  padding:3px 9px;border-radius:999px;white-space:nowrap;background:var(--bg-2);
+  border:1px solid var(--line);color:var(--muted)}
+.sev.crit{color:var(--red);border-color:color-mix(in srgb,var(--red) 45%,transparent)}
+.sev.warn{color:var(--rust);border-color:color-mix(in srgb,var(--rust) 45%,transparent)}
+.sev.info{color:var(--blue);border-color:color-mix(in srgb,var(--blue) 45%,transparent)}
+.dropbtn{width:22px;height:22px;border-radius:5px;color:var(--muted);font-size:16px;line-height:1;
+  display:grid;place-items:center;opacity:.45}
+.todo-row:hover .dropbtn{opacity:1}
+.dropbtn:hover{color:var(--red);background:var(--bg-2)}
+.dropped .todo-text{color:var(--muted)}
+.emptied{padding:26px 16px;text-align:center;color:var(--muted);font-size:15px;
+  border:1px dashed var(--line);border-radius:12px}
+details.dismissed summary{cursor:pointer;font-size:12px;letter-spacing:1.6px;text-transform:uppercase;
+  color:var(--muted);font-weight:800;padding:8px 0;list-style:none}
+details.dismissed summary::-webkit-details-marker{display:none}
+details.dismissed summary::before{content:"▸ ";display:inline-block}
+details.dismissed[open] summary::before{transform:rotate(90deg)}
+
+/* ============ trips ============ */
+.trips{display:flex;flex-direction:column}
+.trip{display:block;border-top:1px solid var(--line)}
+.trip:last-child{border-bottom:1px solid var(--line)}
+.month-head{position:sticky;top:0;z-index:5;background:var(--bg);
+  font-size:12px;letter-spacing:2px;text-transform:uppercase;font-weight:800;
+  color:var(--gold);padding:16px 0 8px}
+.trip-main{padding:12px 0 18px;min-width:0}
+.trip-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;
+  width:100%;background:none;border:0;padding:0;font:inherit;color:inherit;cursor:pointer;text-align:left}
+.trip-head:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:4px}
+.trip-title{font-size:18.5px;font-weight:900;color:var(--text);letter-spacing:-.2px}
+.trip-dates{font-size:14px;color:var(--muted);margin-top:3px;display:block}
+.trip-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.pill{font-size:12px;font-weight:800;letter-spacing:.4px;padding:3px 9px;border-radius:999px;
+  border:1px solid var(--line);background:var(--bg-2);color:var(--muted);white-space:nowrap}
+.pill.ok{color:var(--green);border-color:color-mix(in srgb,var(--green) 45%,transparent)}
+.pill.warn{color:var(--rust);border-color:color-mix(in srgb,var(--rust) 45%,transparent)}
+.pill.crit{color:var(--red);border-color:color-mix(in srgb,var(--red) 45%,transparent)}
+.chev{color:var(--muted);font-size:13.5px;transition:transform .15s;display:inline-block}
+.trip[data-open="true"] .chev{transform:rotate(90deg)}
+.trip-body{margin-top:16px}
+.trip[data-open="false"] .trip-body{display:none}
+.who{font-size:13.5px;color:var(--muted);margin-bottom:16px}
+.who b{color:var(--text-2);font-weight:700}
+
+/* ============ weather module ============ */
+.card{background:linear-gradient(180deg,var(--card),var(--card-2));border:1px solid var(--line);
+  border-radius:16px;padding:16px;box-shadow:var(--shadow);color:var(--text)}
+.wx{margin-bottom:16px}
+.card-title{font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(--gold);
+  font-size:13.5px;margin-bottom:10px}
+.weather-loading{color:var(--muted);font-size:14.5px}
+.weather-strip-label{margin:14px 0 8px;font-size:12px;letter-spacing:2px;
+  text-transform:uppercase;color:var(--gold);font-weight:800}
+.weather-strip-label:first-of-type{margin-top:0}
+.weather-strip-hint{color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:none}
+.weather-mini-note{margin:10px 0 0;color:var(--muted);font-size:12px}
+.weather-now{display:flex;align-items:center;gap:12px}
+.wn-emoji{font-size:40px;line-height:1}
+.wn-temp{font-size:40px;font-weight:900;color:var(--gold-2);font-variant-numeric:tabular-nums;line-height:1}
+.wn-meta{display:flex;flex-direction:column;min-width:0}
+.wn-verdict{font-weight:900;font-size:18.5px}
+.wn-sub{color:var(--muted);font-size:13.5px;margin-top:2px}
+.weather-carousel{display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 16px)/3);
+  gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -16px;padding:2px 16px 4px;
+  scroll-padding:0 16px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.weather-carousel::-webkit-scrollbar{display:none}
+.wcard{scroll-snap-align:start;background:var(--bg-2);border:1px solid var(--line);border-radius:14px;
+  padding:6px 4px;text-align:center;font:inherit;color:var(--text);cursor:pointer;appearance:none}
+.wcard:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.wcard-dow{font-size:13.5px;font-weight:900;color:var(--text);text-transform:uppercase;letter-spacing:1px}
+.wcard-date{font-size:11px;color:var(--muted);line-height:1.2}
+.wcard-trip{display:inline-block;font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--gold);border:1px solid var(--gold);border-radius:20px;padding:1px 7px;margin-top:3px}
+.wcard-emoji{font-size:26px;margin:3px 0 1px;line-height:1.2}
+.wcard-verdict{font-size:12px;font-weight:800;min-height:29px;display:flex;align-items:center;
+  justify-content:center;line-height:1.15;color:var(--text-2)}
+.wcard-temps{margin-top:1px;font-variant-numeric:tabular-nums}
+.wcard-hi{font-weight:900;color:var(--gold-2);font-size:17.5px}
+.wcard-lo{color:var(--muted);font-size:14.5px;margin-left:5px}
+.wcard-pop{color:var(--v-rain);font-size:12px;margin-top:2px;font-variant-numeric:tabular-nums}
+.wcard-sel{border-color:var(--gold)!important;background:color-mix(in srgb,var(--gold) 8%,transparent)}
+.hourly{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:2px;margin-top:10px;
+  padding:10px 4px;background:var(--bg-2);border:1px solid var(--line);border-radius:12px}
+.hourly-slot{text-align:center}
+.hourly-hr{font-size:11px;font-weight:800;color:var(--muted)}
+.hourly-emoji{font-size:18.5px;margin:3px 0 1px;line-height:1}
+.hourly-temp{font-size:13.5px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums}
+.hourly-pop{font-size:11px;color:var(--muted);min-height:15px;font-variant-numeric:tabular-nums}
+.hourly-pop.wet{color:var(--v-rain);font-weight:800}
+.verdict-storm{color:var(--v-storm)} .verdict-hot{color:var(--v-hot)}
+.verdict-warm{color:var(--v-warm)} .verdict-rain{color:var(--v-rain)}
+.verdict-nice{color:var(--v-nice)} .verdict-cloudy{color:var(--muted)}
+.verdict-border-storm{border-color:rgba(143,184,255,.5)}
+.verdict-border-hot{border-color:rgba(255,122,77,.55)}
+.verdict-border-warm{border-color:rgba(255,216,74,.4)}
+.verdict-border-rain{border-color:rgba(159,208,255,.45)}
+.verdict-border-nice{border-color:rgba(109,213,122,.45)}
+
+/* ============ day-by-day itinerary ============ */
+.days-card{background:linear-gradient(180deg,var(--card),var(--card-2));border:1px solid var(--line);
+  border-radius:16px;box-shadow:var(--shadow);padding:2px 18px 12px;margin-top:14px}
+.day{padding:8px 0 10px}
+.day+.day{border-top:1px solid var(--line)}
+.day-head{display:flex;align-items:baseline;gap:10px;padding:14px 0 8px;margin-bottom:8px}
+.day-dow{font-size:21px;font-weight:800;letter-spacing:-.3px;color:var(--text)}
+.day-date{font-size:14px;font-weight:700;color:var(--gold-3)}
+.day-note{font-size:13.5px;color:var(--muted);margin-left:auto;font-style:italic}
+.ev{display:grid;grid-template-columns:96px 1fr auto;gap:4px 14px;padding:7px 0;align-items:start}
+/* an unbooked row must not read like a confirmed one */
+.ev.unbooked{border-left:2px dashed color-mix(in srgb,var(--rust) 55%,transparent);
+  padding-left:12px;margin-left:-14px}
+.ev.unbooked .ev-t{color:var(--text-2)}
+.ev-side{display:flex;flex-direction:column;gap:7px;align-items:flex-end;min-width:0}
+@media (max-width:560px){.ev{grid-template-columns:1fr;gap:2px}
+  /* refs stack one per line, like rows in a table — never side by side */
+  .ev-side{flex-direction:column;align-items:flex-start;justify-content:flex-start}
+  /* one reading edge per row: on rows with an avatar the refs indent to the
+     text column instead of dropping to the avatar's left edge */
+  .ev-b.has-avatar + .ev-side{margin-left:50px}
+  .ev .ev-time .arr{display:inline;margin:0 0 0 6px}
+  .cref.side{flex-direction:row;align-items:baseline;text-align:left}}
+.ev-time{font-size:13.5px;font-variant-numeric:tabular-nums;color:var(--text-2);padding-top:2px;
+  white-space:nowrap;font-weight:600}
+.ev-time .z{color:var(--muted);font-weight:400}
+.ev-time .arr{display:block;margin-top:3px}
+.ev-time.none{color:var(--muted);font-weight:400}
+.ev-b{min-width:0}
+.ev-t{font-size:16px;line-height:1.35;font-weight:700;color:var(--text)}
+.ev-t .kind{font-size:11.5px;letter-spacing:.9px;text-transform:uppercase;font-weight:800;
+  padding:2px 7px;border-radius:999px;margin-left:8px;vertical-align:2px;white-space:nowrap;
+  color:var(--muted);background:var(--bg-2);border:1px solid var(--line)}
+.det-toggle{background:none;border:0;padding:0;color:var(--gold-3);font:inherit;
+  font-size:14px;font-weight:700;cursor:pointer;margin-top:3px}
+.det-toggle:hover{text-decoration:underline}
+.ev-d{font-size:14px;color:var(--muted);line-height:1.5;margin-top:3px;overflow-wrap:anywhere}
+.ev-d b{color:var(--text-2);font-weight:700}
+.cref.side{flex-direction:column;align-items:flex-start;gap:1px;text-align:left}
+/* a ref is a value you read out at a counter — small caps label, mono value.
+   Tap still copies (flashes green); no underline, no chrome. */
+.cref{appearance:none;display:inline-flex;align-items:baseline;gap:7px;cursor:pointer;
+  background:none;border:0;padding:0;font:inherit;line-height:1.3;text-align:left}
+.cref:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.cref .k{font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:800;color:var(--muted)}
+.cref .v{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;
+  color:var(--text-2);font-variant-numeric:tabular-nums;letter-spacing:.01em}
+.cref:hover .v{color:var(--text)}
+.cref.copied .v{color:var(--green)}
+.ev-links{margin-top:7px;display:flex;gap:8px;flex-wrap:wrap}
+.btn{display:inline-block;font-size:14px;font-weight:700;text-decoration:none;
+  padding:6px 12px;border-radius:999px;background:var(--bg-2);color:var(--text-2);
+  border:1px solid var(--line);line-height:1.3}
+.btn:hover{border-color:var(--gold);color:var(--text)}
+.btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.btn-primary{background:linear-gradient(180deg,var(--btn-hi),var(--btn-lo));
+  background-origin:border-box;color:#251e0d;border:none;font-weight:900}
+/* the place is a link on its own name — it never needs a button.
+   A pin glyph says "this is a location"; an arrow would only say "leaves the page". */
+.ev-place{margin-top:2px}
+.place-link{font-size:14px;font-weight:700;color:var(--gold-3);text-decoration:none}
+.place-link .pin{width:11px;height:11px;vertical-align:-1px;margin-right:3px}
+.place-link:hover{text-decoration:underline}
+/* ---------- marquee: the 2–3 moments a trip is actually about ----------
+   A promoted event renders as a full-bleed hero card instead of a row.
+   Same facts as the row (kind, place, description, refs) — the picture is
+   the only addition. Text over the photo always gets a scrim AND its own
+   text-shadow, so an uncontrolled image can never make it unreadable. */
+.ev.marquee{display:block;padding:0;border:1px solid var(--line);border-radius:16px;
+  background:var(--card);box-shadow:var(--shadow);overflow:hidden;margin:12px 0}
+.mq-media{position:relative;height:190px}
+.mq-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.mq-scrim{position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(5,5,5,.15) 25%,rgba(5,5,5,.92) 100%)}
+.mq-head{position:absolute;left:0;right:0;bottom:0;padding:12px 14px}
+.mq-when{font-size:13px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+  color:#f0cf7e;text-shadow:0 2px 8px rgba(0,0,0,.9)}
+.mq-title{font-size:24px;font-weight:900;line-height:1.15;color:#fff;
+  text-shadow:0 2px 8px rgba(0,0,0,.9);margin-top:3px}
+.mq-body{display:flex;gap:12px;padding:14px;align-items:flex-start}
+.mq-avatar{width:52px;height:52px;border-radius:14px;flex:none;display:block}
+.mq-main{min-width:0;flex:1}
+.mq-main .ev-side{align-items:flex-start;margin-top:8px}
+.mq-kind{display:inline-block;font-size:11.5px;letter-spacing:.9px;text-transform:uppercase;
+  font-weight:800;padding:2px 7px;border-radius:999px;white-space:nowrap;margin-bottom:4px;
+  color:var(--muted);background:var(--bg-2);border:1px solid var(--line)}
+/* logos are not photographs: contain-fit on a light tile, never cropped.
+   Detail near a logo's edge gets per-container pad (see padFor) with values
+   measured by check-logos.py — the dominant mark may bleed, text must clear.
+   Padded logos render inside a wrapper (.avatar-pad) that carries the inset;
+   the img itself never takes padding (Chrome ignores it for object-fit). */
+.avatar-pad{box-sizing:border-box;overflow:hidden}
+.avatar-pad>img{width:100%;height:100%;display:block}
+.photo-contain{object-fit:contain}
+.photo-tile-light{background:#fff}
+/* row avatars: small logo chips for branded-but-not-marquee rows. Rounded
+   square, never a circle — a circle would crop wide logos (National,
+   United) to nothing. Logos keep contain-fit on the light tile. */
+.row-avatar{width:40px;height:40px;border-radius:11px;flex:none;display:block}
+.ev-b.has-avatar{display:flex;gap:10px;align-items:flex-start}
+.ev-b-main{min-width:0;flex:1}
+/* day banner: a slim "hero ad" for an all-day item (Family Weekend). Shorter
+   than a marquee on purpose — a banner announces, a marquee celebrates.
+   Reuses the marquee scrim so text over any photo stays legible. */
+.day-banner{position:relative;height:112px;border-radius:14px;overflow:hidden;margin:12px 0}
+.db-text{position:absolute;left:16px;right:16px;bottom:12px}
+.db-title{font-size:21px;font-weight:900;color:#fff;letter-spacing:-.2px;line-height:1.2;
+  text-shadow:0 2px 8px rgba(0,0,0,.9)}
+.db-sub{font-size:13px;font-weight:600;color:#f5edd8;margin-top:2px;
+  text-shadow:0 1px 6px rgba(0,0,0,.9)}
+/* the drawer holds the second and third actions, the street address,
+   and any prose long enough to bury the facts above it.
+   Rule: long det always earns a drawer; otherwise the drawer only appears
+   when it would hold two or more items. A lone link renders inline under
+   the button — a tap that hides nothing is not a drawer. */
+.ev-more{margin-top:6px}
+.ev-more summary{font-size:14px;font-weight:700;color:var(--gold-3);cursor:pointer;
+  list-style:none;display:inline-block}
+.ev-more summary::-webkit-details-marker{display:none}
+.ev-more summary:hover{text-decoration:underline}
+.ev-extra{margin-top:7px;display:flex;flex-direction:column;gap:7px}
+.ev-extra.inline .ev-addr{margin-top:0}
+.tlink{font-size:14px;font-weight:600;color:var(--gold-3);text-decoration:none}
+.tlink:hover{text-decoration:underline}
+.ev-addr{margin-top:7px;font-size:14px;color:var(--muted)}
+.ev-more .ev-d{margin-top:7px}
+
+/* ============ refs + notes ============ */
+.refs-lbl{margin-top:20px;font-size:12px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--gold);font-weight:800}
+.refs{margin-top:10px;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.seg{background:var(--bg-2);border:1px solid var(--line);border-radius:12px;padding:11px 13px}
+.seg.missing{background:transparent;border-style:dashed}
+.seg-k{font-size:11.5px;letter-spacing:1.1px;text-transform:uppercase;color:var(--muted);font-weight:800;
+  display:flex;justify-content:space-between;gap:8px;margin-bottom:5px}
+.seg-k .dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;align-self:center}
+.seg.missing .seg-k .dot{background:var(--line)}
+.seg.partial .seg-k .dot{background:var(--rust)}
+.seg-v{font-size:15px;line-height:1.4;color:var(--text);font-weight:600}
+.seg.missing .seg-v{color:var(--muted);font-style:italic;font-weight:400}
+.seg-c{font-size:13.5px;margin-top:5px;color:var(--muted);overflow-wrap:anywhere;line-height:1.5}
+.seg-c b{color:var(--text-2);font-weight:700}
+.notes{margin-top:16px;font-size:15px;color:var(--text-2);line-height:1.55;
+  border-left:2px solid var(--gold);padding-left:12px}
+.notes .lbl{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);
+  display:block;margin-bottom:3px;font-weight:800}
+
+/* ============ service-worker update prompt ============ */
+.sw-toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));
+  z-index:60;display:flex;align-items:center;gap:14px;background:#251e0d;color:#f6f1e2;
+  font-size:15px;font-weight:600;padding:10px 10px 10px 18px;border-radius:999px;white-space:nowrap;
+  max-width:calc(100vw - 32px);box-shadow:0 8px 24px rgba(0,0,0,.28)}
+.sw-refresh{appearance:none;border:0;cursor:pointer;
+  background:linear-gradient(180deg,var(--btn-hi),var(--btn-lo));background-origin:border-box;
+  color:#251e0d;font:inherit;font-weight:900;font-size:14.5px;padding:8px 16px;border-radius:999px}
+
+.foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);
+  font-size:14px;color:var(--muted);line-height:1.6}
+.foot b{color:var(--text-2);font-weight:700}
+.offline-bar{display:none;background:var(--bg-2);color:var(--rust);font-size:14px;
+  font-weight:700;text-align:center;padding:7px 16px;letter-spacing:.02em;
+  border-bottom:1px solid var(--line)}
+body.is-offline .offline-bar{display:block}
+.stale-bar{background:var(--bg-2);color:var(--red);font-size:14px;font-weight:700;
+  text-align:center;padding:8px 16px;letter-spacing:.02em;border-bottom:1px solid var(--line)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+<body>
+<div class="offline-bar">Offline — showing the last saved copy</div>
+<div class="stale-bar" id="stale-bar" hidden></div>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="brand">Travel Desk</div>
+    <div class="sync">Synced <b id="syncedOn">—</b> &nbsp;·&nbsp; Times local to each place</div>
+  </header>
+
+  <div class="hero" id="hero"></div>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" id="tab-trips" role="tab" aria-selected="true" aria-controls="panel-trips">Trips</button>
+    <button class="tab" id="tab-todos" role="tab" aria-selected="false" aria-controls="panel-todos">To-dos <span class="badge" id="todoBadge">0</span></button>
+  </div>
+
+  <div id="panel-trips" role="tabpanel" aria-labelledby="tab-trips">
+    <div class="trips" id="tripList"></div>
+  </div>
+
+  <div id="panel-todos" role="tabpanel" aria-labelledby="tab-todos" hidden>
+    <section>
+      <div class="sec-head"><h2>Open</h2><span class="count" id="todoCount"></span><span class="saved" id="savedFlag" hidden>Saved</span></div>
+      <div id="todoList"></div>
+    </section>
+    <details class="dismissed" id="doneWrap">
+      <summary><span id="doneCount"></span></summary>
+      <div class="todo" id="doneList"></div>
+    </details>
+    <details class="dismissed" id="dismissedWrap">
+      <summary><span id="dismissedCount"></span></summary>
+      <div class="todo" id="dismissedList"></div>
+    </details>
+  </div>
+
+  <div class="foot">
+    <b>Times</b> are local to the place they happen and are never converted. Google Calendar renders everything in Pacific, so its times for East Coast and overseas events are not what the local clock says — these have all been reconciled against the airline, hotel and ticket confirmations.<br>
+    <b>To-dos:</b> ticking one moves it straight to Done and out of the list; × dismisses it for good. Both save on this device and survive going offline.
+  </div>
+</div>
+
+<script>
+const TODAY = new Date(); // live date — countdowns and to-do ordering stay current
+
+let TRIPS = [];
+let META = {};
+
+const TRIPS_LS = 'etd-trips';
+
+async function loadTrips(){
+  let payload = null;
+  try{
+    const r = await fetch('trips.json', {cache:'no-cache'});
+    if(r.ok) payload = await r.json();
+  }catch(e){}
+  if(payload){
+    try{ localStorage.setItem(TRIPS_LS, JSON.stringify(payload)); }catch(e){}
+  } else {
+    try{ payload = JSON.parse(localStorage.getItem(TRIPS_LS) || 'null'); }catch(e){}
+  }
+  if(!payload || !Array.isArray(payload.trips)) return false;
+  TRIPS = payload.trips;
+  META = payload;
+  return true;
+}
+
+function staleDays(){
+  if(!META.generatedAt) return null;
+  const g = new Date(META.generatedAt + 'T12:00:00-07:00');
+  if(isNaN(g)) return null;
+  return Math.round((Date.now() - g.getTime()) / 86400000);
+}
+
+const MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DOW=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const d=s=>new Date(s+'T12:00:00-07:00');
+const daysTo=s=>Math.round((d(s)-TODAY)/86400000);
+function isoAdd(s,n){const[y,m,dd]=s.split('-').map(Number);return new Date(Date.UTC(y,m-1,dd+n)).toISOString().slice(0,10);}
+function range(t){
+  const a=d(t.start),b=d(t.end);
+  const same=a.getMonth()===b.getMonth()&&a.getFullYear()===b.getFullYear();
+  const n=Math.round((b-a)/86400000);
+  return `${MO[a.getMonth()]} ${a.getDate()} – ${same?b.getDate():MO[b.getMonth()]+' '+b.getDate()}, ${b.getFullYear()} · ${n} night${n===1?'':'s'}`;
+}
+const PILL={ok:['ok','On track'],warn:['warn','Gaps'],crit:['crit','Action needed'],idea:['idea','Planning']};
+const esc=s=>String(s).replace(/&(?!amp;|lt;|gt;|quot;|#)/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+// det/c may carry <b> from the data feed; allow only that tag, escape everything else.
+const rich=s=>esc(s).replace(/&lt;b&gt;/g,'<b>').replace(/&lt;\/b&gt;/g,'</b>');
+const KIND={fly:'Flight',car:'Car',stay:'Stay',ticket:'Tickets',table:'Dinner',event:'Event',todo:'Open'};
+
+let done=new Set(), dropped=new Set();
+
+/* ---------- hero ---------- */
+function nextEvent(t){
+  const day=(t.days||[])[0], it=day&&day.items&&day.items[0];
+  if(!it) return '';
+  const dt=d(day.d);
+  let s=`${DOW[dt.getDay()].slice(0,3)} ${MO[dt.getMonth()]} ${dt.getDate()}`;
+  if(it.time) s+=` · ${esc(it.time)}${it.z?' '+esc(it.z):''}`;
+  return `${s} · ${esc(it.title)}`;
+}
+function renderHero(){
+  if(!TRIPS.length) return;
+  const t=TRIPS[0], n=Math.max(0,daysTo(t.start));
+  const cols=(t.days||[]).map(day=>{
+    const dt=d(day.d);
+    const lines=day.items.slice(0,4).map(it=>
+      `<span class="hd-l"><span class="t">${esc(it.time?it.time:'—')}</span> ${esc(it.title)}</span>`).join('');
+    return `<div class="hd">
+      <div class="hd-k">${DOW[dt.getDay()].slice(0,3)} ${MO[dt.getMonth()]} ${dt.getDate()}</div>${lines}</div>`;
+  }).join('');
+  const nx=nextEvent(t);
+  // The countdown exists only while the trip is still coming. On departure
+  // day it goes away entirely — the trip is here, not coming.
+  const nLbl=n===1?'day out':'days out';
+  const countHtml=n>0
+    ? `<div class="hero-numwrap"><div class="hero-num">${n}</div><div class="hero-nlbl">${nLbl}</div></div>`
+    : '';
+  document.getElementById('hero').innerHTML=`
+    <div class="hero-eyebrow">Next departure</div>
+    <div class="hero-count">
+      ${countHtml}
+      <div class="hero-id">
+        <div class="hero-name">${esc(t.title)}</div>
+        <div class="hero-sub">${range(t)} · ${esc(t.where)}</div>
+      </div>
+    </div>
+    ${nx?`<div class="hero-next"><span class="hero-next-k">Next up</span><span class="hero-next-v">${nx}</span></div>`:''}
+    ${cols?`<div class="hero-days">${cols}</div>`:''}`;
+}
+
+/* ---------- to-dos ---------- */
+const RANK={crit:0,warn:1,info:2};
+function allTodos(){
+  const out=[];
+  TRIPS.forEach(t=>(t.todos||[]).forEach(td=>out.push({...td,trip:t.title,when:daysTo(t.start)})));
+  return out.sort((a,b)=>{
+    const pa=a.pri!==undefined?a.pri:100+RANK[a.sev]*1000+a.when;
+    const pb=b.pri!==undefined?b.pri:100+RANK[b.sev]*1000+b.when;
+    return pa-pb;
+  });
+}
+function rowHtml(x,isDropped){
+  const label=x.due?x.due:(x.sev==='crit'?'Now':x.sev==='warn'?'Soon':'Note');
+  return `<div class="todo-row ${done.has(x.id)?'done':''} ${isDropped?'dropped':''}">
+    <button class="tickbtn" data-act="tick" data-id="${esc(x.id)}" aria-pressed="${done.has(x.id)}"
+      aria-label="Mark done"><span class="tick" aria-hidden="true">✓</span></button>
+    <span class="todo-body">
+      <span class="todo-text">${esc(x.t)}</span>
+      <span class="todo-meta">${esc(x.trip)} · ${esc(x.m)}</span>
+    </span>
+    <span class="todo-right">
+      ${isDropped?'':`<span class="sev ${x.sev}">${esc(label)}</span>`}
+      <button class="dropbtn" data-act="${isDropped?'restore':'drop'}" data-id="${esc(x.id)}"
+        aria-label="${isDropped?'Restore':'Dismiss'}" title="${isDropped?'Restore':'Dismiss'}">${isDropped?'↺':'×'}</button>
+    </span>
+  </div>`;
+}
+function renderTodos(){
+  const list=allTodos();
+  const open=list.filter(x=>!dropped.has(x.id)&&!done.has(x.id));
+  const fin =list.filter(x=>!dropped.has(x.id)&&done.has(x.id));
+  const gone=list.filter(x=>dropped.has(x.id));
+
+  const badge=document.getElementById('todoBadge');
+  badge.textContent=open.length;
+  badge.className='badge'+(open.some(x=>x.sev==='crit')?'':' calm');
+
+  document.getElementById('todoCount').textContent=
+    open.length ? `${open.length} to do` : 'all clear';
+  document.getElementById('todoList').innerHTML = open.length
+    ? `<div class="todo">${open.map(x=>rowHtml(x,false)).join('')}</div>`
+    : `<div class="emptied">Nothing left to do. Anything new turns up on the next sync.</div>`;
+
+  const dw=document.getElementById('doneWrap');
+  dw.hidden = fin.length===0;
+  document.getElementById('doneCount').textContent=`Done (${fin.length})`;
+  document.getElementById('doneList').innerHTML=fin.map(x=>rowHtml(x,false)).join('');
+
+  const w=document.getElementById('dismissedWrap');
+  w.hidden = gone.length===0;
+  document.getElementById('dismissedCount').textContent=`Dismissed (${gone.length})`;
+  document.getElementById('dismissedList').innerHTML=gone.map(x=>rowHtml(x,true)).join('');
+}
+let savedTimer=null;
+function flashSaved(){
+  const f=document.getElementById('savedFlag');
+  f.hidden=false; clearTimeout(savedTimer);
+  savedTimer=setTimeout(()=>{f.hidden=true;},1600);
+}
+document.addEventListener('click',async e=>{
+  const c=e.target.closest('.cref');
+  if(c){
+    const v=c.dataset.copy;
+    try{ await navigator.clipboard.writeText(v); }
+    catch(err){
+      const ta=document.createElement('textarea');
+      ta.value=v; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); }catch(e2){}
+      ta.remove();
+    }
+    const label=c.querySelector('.v'), was=label.textContent;
+    c.classList.add('copied'); label.textContent='Copied';
+    setTimeout(()=>{ c.classList.remove('copied'); label.textContent=was; },1100);
+    return;
+  }
+  const b=e.target.closest('[data-act]'); if(!b) return;
+  const id=b.dataset.id;
+  if(b.dataset.act==='tick'){ done.has(id)?done.delete(id):done.add(id); }
+  else if(b.dataset.act==='drop'){ dropped.add(id); done.delete(id); }
+  else if(b.dataset.act==='restore'){ dropped.delete(id); done.delete(id); }
+  renderTodos(); save();
+});
+/* ---------- trips ---------- */
+function refChips(refs,side){
+  return (refs||[]).map(([k,v])=>
+    `<button class="cref${side?' side':''}" data-copy="${esc(v)}" title="Copy ${esc(v)}">
+      <span class="k">${esc(k)}</span><span class="v">${esc(v)}</span></button>`).join('');
+}
+/* long prose collapses behind a Details toggle so rows stay scannable */
+function detHtml(det){
+  if(!det) return '';
+  const html=rich(det);
+  if(det.length>200)
+    return `<div class="ev-d"><button class="det-toggle" aria-expanded="false">Details</button><div class="det-full" hidden>${html}</div></div>`;
+  return `<div class="ev-d">${html}</div>`;
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('.det-toggle');
+  if(!b) return;
+  const full=b.nextElementSibling, open=b.getAttribute('aria-expanded')==='true';
+  b.setAttribute('aria-expanded',String(!open));
+  full.hidden=open;
+  b.textContent=open?'Details':'Hide';
+});
+/* search by venue name, not street address — a name resolves, and nothing
+   has to be transcribed (or invented) to make the link work */
+function mapQuery(place,city){
+  const q=[place,city].filter(Boolean).join(', ');
+  return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);
+}
+/* ---------- photos ----------
+   Events reference a registry key, never a path — swapping an image is a
+   one-line edit here. Alt text was written from opening each file, not from
+   its filename. Logos are not photographs: contain-fit on a light tile, so
+   the mark is never cropped. */
+const PHOTOS={
+  /* Your images live in img/ and are registered here. Events reference a
+     registry key, never a path — swapping an image is a one-line edit.
+     Photo example:
+       'my-hotel':{src:'img/my-hotel.jpg',
+         alt:'What the photo actually shows — write it from opening the file'},
+     Logo example (contain-fit on a light tile, never cropped):
+       'my-airline':{src:'img/my-airline.png',fit:'contain',tile:'light',
+         alt:'Airline logo description'},
+     Run ./check-logos.py after adding a logo — it measures the padding each
+     logo needs and fails the deploy if a mark would be clipped. */
+};
+/* pad: CSS px of breathing room inside the chip, per container. A logo's
+   registry entry carries a number (both containers) or {row,mq}. Values are
+   measured by check-logos.py — never guess them. */
+function padFor(p,cls){
+  if(p.pad==null) return 0;
+  if(typeof p.pad==='object') return p.pad[cls==='mq-avatar'?'mq':'row']||0;
+  return p.pad;
+}
+function photoImg(key,cls,eager){
+  const p=PHOTOS[key]; if(!p) return '';
+  const mods=(p.fit==='contain'?' photo-contain':'')+(p.tile==='light'?' photo-tile-light':'');
+  const load=eager?' loading="eager" decoding="sync" fetchpriority="high"':' loading="lazy" decoding="async"';
+  const pp=padFor(p,cls);
+  if(!pp) return `<img src="${p.src}" alt="${esc(p.alt)}" class="${cls}${mods}" draggable="false"${load}>`;
+  /* Padded logos: the wrapper carries size, radius, tile and padding; the img
+     fills the wrapper's content box. Padding must NOT sit on the img itself —
+     Chrome sizes object-fit content to the border box, ignoring img padding,
+     so the artwork overflows its insets and gets chopped. */
+  const tile=p.tile==='light'?' photo-tile-light':'';
+  return `<span class="${cls}${tile} avatar-pad" style="padding:${pp}px">`
+    +`<img src="${p.src}" alt="${esc(p.alt)}" class="photo-contain" draggable="false"${load}></span>`;
+}
+function evTimeHtml(it){
+  return it.time
+    ? `<span class="ev-time">${esc(it.time)}${it.z?` <span class="z">${esc(it.z)}</span>`:''}</span>`
+    : `<span class="ev-time none">all day</span>`;
+}
+function evTitleHtml(it){
+  return `<div class="ev-t">${esc(it.title)}${it.kind?`<span class="kind">${esc(KIND[it.kind]||it.kind)}</span>`:''}</div>`;
+}
+/* everything a row carries below its title: place, description, actions, drawer */
+function evContentHtml(it,city){
+  // A link labelled "Map" is not an action — it is the place, and the place
+  // belongs on its own name. Detected as well as declared, so older data
+  // that still ships a Map button upgrades without being rewritten.
+  const all=(it.links||[]).filter(([,href])=>/^(https?:|tel:|mailto:)/i.test(href||'')).slice();
+  const mapIdx=all.findIndex(([t])=>/^\s*(📍\s*)?maps?\s*$/i.test(t||''));
+  let mapHref='';
+  if(mapIdx>=0){ mapHref=all[mapIdx][1]; all.splice(mapIdx,1); }
+  // One filled button per row: links[0] is the thing you'd press standing on
+  // the sidewalk. Everything after it becomes a quiet text link in the drawer.
+  const primary=all[0]||null, extra=all.slice(1);
+  const btn=primary
+    ? `<div class="ev-links"><a class="btn btn-primary" href="${esc(primary[1])}" target="_blank" rel="noopener">${esc(primary[0])}</a></div>`
+    : '';
+  const q=it.place?[it.place,it.city||city].filter(Boolean).join(', '):(it.map||'');
+  const placeHref=q?mapQuery(q,''):mapHref;
+  const placeLbl=it.place||(placeHref?'Map':'');
+  const PIN='<svg class="pin" viewBox="0 0 16 16" width="11" height="11" fill="currentColor" aria-hidden="true"><path d="M8 1.5a4.5 4.5 0 0 0-4.5 4.5c0 3.4 4.5 8.5 4.5 8.5s4.5-5.1 4.5-8.5A4.5 4.5 0 0 0 8 1.5zm0 6.2a1.7 1.7 0 1 1 0-3.4 1.7 1.7 0 0 1 0 3.4z"/></svg>';
+  const placeHtml=placeHref
+    ? `<div class="ev-place"><a class="place-link" href="${esc(placeHref)}" target="_blank" rel="noopener">${PIN}${esc(placeLbl)}</a></div>`
+    : '';
+  const det=it.det||'';
+  const longDet=det.replace(/<[^>]+>/g,'').length>200;
+  const inlineDet=(det&&!longDet)?`<div class="ev-d">${rich(det)}</div>`:'';
+  // A drawer needs something to hide. Long det always earns one; otherwise
+  // it only appears with two or more items, and a lone link renders inline
+  // under the button instead.
+  const hideItems=[];
+  if(it.addr) hideItems.push(`<div class="ev-addr">${esc(it.addr)}</div>`);
+  extra.forEach(([t,h])=>hideItems.push(
+    `<a class="tlink" href="${esc(h)}" target="_blank" rel="noopener">${esc(t)}</a>`));
+  let drawer='', inlineExtra='';
+  if(longDet){
+    drawer=`<details class="ev-more"><summary>Details</summary><div class="ev-d">${rich(det)}</div>${hideItems.length?`<div class="ev-extra">${hideItems.join('')}</div>`:''}</details>`;
+  }else if(hideItems.length>=2){
+    drawer=`<details class="ev-more"><summary>Details</summary><div class="ev-extra">${hideItems.join('')}</div></details>`;
+  }else if(hideItems.length===1){
+    inlineExtra=`<div class="ev-extra inline">${hideItems[0]}</div>`;
+  }
+  return `${placeHtml}${inlineDet}${btn}${inlineExtra}${drawer}`;
+}
+function evRefsHtml(it){
+  const refs=refChips(it.refs,true);
+  return refs?`<div class="ev-side">${refs}</div>`:'';
+}
+function evHtml(it,city){
+  const av=it.avatar?photoImg(it.avatar,'row-avatar'):'';
+  const body=av
+    ? `<div class="ev-b has-avatar">${av}<div class="ev-b-main">${evTitleHtml(it)}${evContentHtml(it,city)}</div></div>`
+    : `<div class="ev-b">${evTitleHtml(it)}${evContentHtml(it,city)}</div>`;
+  return `<div class="ev${it.kind==='todo'?' unbooked':''}">${evTimeHtml(it)}${body}${evRefsHtml(it)}</div>`;
+}
+/* day banner: an all-day item promoted to a slim photo banner. The time
+   collapses away entirely — the banner IS the all-day statement. */
+function itemBannerHtml(it){
+  return `<div class="day-banner">${photoImg(it.photo,'mq-bg',true)}<div class="mq-scrim"></div>`
+    +`<div class="db-text"><div class="db-title">${esc(it.title)}</div>`
+    +(it.det?`<div class="db-sub">${rich(it.det)}</div>`:'')+`</div></div>`;
+}
+/* marquee: the 2–3 moments a trip is about, promoted to a full-bleed hero card.
+   The time collapses to a caption over the image; every fact from the row
+   (kind, place, description, refs) is preserved below it. */
+function marqueeHtml(it,city,dayLabel){
+  const when=[dayLabel,it.time?`${it.time}${it.z?' '+it.z:''}`:''].filter(Boolean).join(' · ');
+  return `<div class="ev marquee"><div class="mq-media">${photoImg(it.photo,'mq-bg',true)}`
+    +`<div class="mq-scrim"></div><div class="mq-head"><div class="mq-when">${esc(when)}</div>`
+    +`<div class="mq-title">${esc(it.title)}</div></div></div>`
+    +`<div class="mq-body">${it.avatar?photoImg(it.avatar,'mq-avatar'):''}<div class="mq-main">`
+    +(it.kind?`<span class="mq-kind">${esc(KIND[it.kind]||it.kind)}</span>`:'')
+    +evContentHtml(it,city)+evRefsHtml(it)+`</div></div></div>`;
+}
+/* paired flight: takeoff + landing render as one row, anchored at takeoff */
+function flightHtml(dep,land){
+  const t1=`${esc(dep.time)}${dep.z?` <span class="z">${esc(dep.z)}</span>`:''}`;
+  const t2=land&&land.time?`${esc(land.time)}${land.z?` <span class="z">${esc(land.z)}</span>`:''}`:'';
+  const time=`<span class="ev-time"><span>${t1}</span>${t2?`<span class="arr">→ ${t2}</span>`:''}</span>`;
+  const all=(dep.links||[]).filter(([,href])=>/^(https?:|tel:|mailto:)/i.test(href||'')).slice();
+  const primary=all[0]||null, extra=all.slice(1);
+  const btn=primary
+    ? `<div class="ev-links"><a class="btn btn-primary" href="${esc(primary[1])}" target="_blank" rel="noopener">${esc(primary[0])}</a></div>`
+    : '';
+  const drawer=extra.length
+    ? `<details class="ev-more"><summary>Details</summary><div class="ev-extra">${extra.map(([t,h])=>
+        `<a class="tlink" href="${esc(h)}" target="_blank" rel="noopener">${esc(t)}</a>`).join('')}</div></details>`
+    : '';
+  const refs=refChips(dep.refs,true);
+  const av=dep.avatar?photoImg(dep.avatar,'row-avatar'):'';
+  return `<div class="ev flight">${time}<div class="ev-b${av?' has-avatar':''}">${av}${av?'<div class="ev-b-main">':''}
+    <div class="ev-t">${esc(dep.route||dep.title)}<span class="kind">${esc(KIND[dep.kind]||dep.kind)}</span></div>
+    ${detHtml(dep.det)}
+    ${detHtml(land&&land.det)}
+    ${btn}
+    ${drawer}
+  ${av?'</div>':''}</div>${refs?`<div class="ev-side">${refs}</div>`:''}</div>`;
+}
+/* group takeoff/landing legs by their shared flight id (first leg in doc order = takeoff) */
+function flightPairs(t){
+  const map={};
+  (t.days||[]).forEach((day,di)=>{(day.items||[]).forEach((it,ii)=>{
+    if(!it.flight) return;
+    if(!map[it.flight]) map[it.flight]={dep:null,land:null,depDi:-1,depIi:-1};
+    const p=map[it.flight];
+    if(!p.dep){p.dep=it;p.depDi=di;p.depIi=ii;}else if(!p.land){p.land=it;}
+  });});
+  return map;
+}
+function dayHtml(day,di,t,pairs){
+  const dt=d(day.d);
+  const dayLabel=`${DOW[dt.getDay()]}, ${MO[dt.getMonth()]} ${dt.getDate()}`;
+  const items=[];
+  (day.items||[]).forEach((it,ii)=>{
+    if(it.flight){
+      const p=pairs[it.flight];
+      if(p&&p.depDi===di&&p.depIi===ii) items.push(flightHtml(p.dep,p.land));
+      return; /* landing legs never render alone — the pair renders at takeoff */
+    }
+    /* a banner item is promoted to a slim photo card; a marquee event to a
+       hero card; everything else is a row */
+    items.push(it.banner?itemBannerHtml(it)
+      :it.marquee?marqueeHtml(it,t.city||t.where,dayLabel):evHtml(it,t.city||t.where));
+  });
+  return `<div class="day">
+    <div class="day-head">
+      <span class="day-dow">${DOW[dt.getDay()]}</span>
+      <span class="day-date">${MO[dt.getMonth()]} ${dt.getDate()}</span>
+      ${day.note?`<span class="day-note">${esc(day.note)}</span>`:''}
+    </div>
+    ${items.join('')}
+  </div>`;
+}
+function refsHtml(refs,hasDays){
+  if(!refs||!refs.length) return '';
+  return `${hasDays?'<div class="refs-lbl">Not tied to a date</div>':''}
+  <div class="refs">${refs.map(s=>`
+    <div class="seg ${s.state||'ok'}">
+      <div class="seg-k"><span>${esc(s.k)}</span><span class="dot"></span></div>
+      <div class="seg-v">${esc(s.v)}</div>
+      ${s.c?`<div class="seg-c">${rich(s.c)}</div>`:''}
+    </div>`).join('')}</div>`;
+}
+
+/* ---------- weather module ----------
+   Rendered only when a trip starts within 10 days (or is already underway).
+   One question drives everything: the strip always shows the next 10 days,
+   starting today, so you see the lead-in week plus the trip itself. Any day
+   that falls on a trip date gets a small "Trip day" badge. When no trip
+   dates are inside the forecast window yet, a note says when the trip
+   forecast lands. Condition engine classifies each day; one category drives
+   both the condition text colour (right now) and the card border trim.
+   Five things that must not change: factual condition phrases,
+   the hourly panel as a sibling of the strip, scroll-padding matching the
+   negative margin, one category driving text+border, cloudy gets no border. */
+const WX_CODES={0:['Clear','☀️'],1:['Mostly clear','🌤️'],2:['Partly cloudy','⛅'],3:['Overcast','☁️'],
+45:['Fog','🌫️'],48:['Fog','🌫️'],51:['Light drizzle','🌦️'],53:['Drizzle','🌦️'],55:['Heavy drizzle','🌦️'],
+56:['Freezing drizzle','🌧️'],57:['Freezing drizzle','🌧️'],61:['Light rain','🌧️'],63:['Rain','🌧️'],65:['Heavy rain','🌧️'],
+66:['Freezing rain','🌧️'],67:['Freezing rain','🌧️'],71:['Light snow','🌨️'],73:['Snow','🌨️'],75:['Heavy snow','🌨️'],
+77:['Snow grains','🌨️'],80:['Showers','🌦️'],81:['Showers','🌦️'],82:['Heavy showers','⛈️'],
+85:['Snow showers','🌨️'],86:['Snow showers','🌨️'],95:['Thunderstorm','⛈️'],96:['Storm + hail','⛈️'],99:['Storm + hail','⛈️']};
+const describeWx=c=>WX_CODES[c]||['—','🌡️'];
+/* priority cascade, not a scoring function: the card leads with the most significant true condition.
+   Text stays factual and professional: standard condition labels plus heat/precipitation overrides. */
+function verdictFor(key,code,heat,pop){
+  const label=describeWx(code)[0];
+  const isRainCode=(code>=51&&code<=67)||(code>=80&&code<=82);
+  const isSnowCode=(code>=71&&code<=77)||code===85||code===86;
+  let cat,text;
+  if(code>=95||(pop!=null&&pop>=70)){
+    cat='storm';
+    if(code>=95) text='Thunderstorms';
+    else if(isSnowCode) text='Heavy snow likely';
+    else if(isRainCode) text='Heavy precipitation likely';
+    else text='Storms likely';
+  }
+  else if(heat>=93){cat='hot';text=code<=1?'Hot and sunny':'Hot';}
+  else if(isRainCode||isSnowCode||(pop!=null&&pop>=40)){
+    cat='rain';text=(pop!=null&&pop>=40&&!isRainCode&&!isSnowCode)?'Chance of rain':label;
+  }
+  else if(heat>=85){cat='warm';text=code<=1?'Warm and sunny':'Warm';}
+  else if(code<=1){cat='nice';text=label;}
+  else{cat='cloudy';text=label;}
+  return {cat,text};
+}
+function tripDateList(ts,te){
+  const out=[];let s=ts;
+  while(s<=te){out.push(s);s=isoAdd(s,1);}
+  return out;
+}
+function wxCard(t){
+  if(!t.coords||daysTo(t.start)>10||daysTo(t.end)<0) return '';
+  const place=esc(t.where||'Forecast');
+  return `<div class="card wx" data-wx="${t.coords[0]}|${t.coords[1]}" data-ts="${t.start}" data-te="${t.end}" data-place="${place}">
+    <div class="card-title">🌡️ ${place} weather</div>
+    <div class="weather-loading">Checking the skies…</div></div>`;
+}
+function wxInner(el,j){
+  const ts=el.dataset.ts, te=el.dataset.te, place=el.dataset.place;
+  const dates=tripDateList(ts,te);
+  const cur=j.current||{};
+  const [curLabel,curEmoji]=describeWx(cur.weather_code);
+  const nowV=verdictFor('now',cur.weather_code,cur.apparent_temperature,null);
+  const dy=j.daily||{};
+  const allDays=(dy.time||[]).map((date,i)=>({
+    date, code:dy.weather_code?dy.weather_code[i]:null,
+    hi:dy.temperature_2m_max?dy.temperature_2m_max[i]:null,
+    lo:dy.temperature_2m_min?dy.temperature_2m_min[i]:null,
+    pop:dy.precipitation_probability_max?dy.precipitation_probability_max[i]:null
+  }));
+  const tripSet=new Set(dates);
+  const days=allDays.slice(0,10);
+  const showingTrip=days.some(x=>tripSet.has(x.date));
+  const cards=days.map(x=>{
+    const [label,emoji]=describeWx(x.code);
+    const v=verdictFor(x.date,x.code,x.hi,x.pop);
+    const dd=new Date(x.date+'T12:00:00');
+    const dow=dd.toLocaleDateString('en-US',{weekday:'short'});
+    const md=dd.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const tripBadge=tripSet.has(x.date)?'<div class="wcard-trip">Trip day</div>':'';
+    return `<button class="wcard verdict-border-${v.cat}" data-date="${x.date}" aria-expanded="false" title="${esc(label)}">`
+      +`<div class="wcard-dow">${dow}</div><div class="wcard-date">${md}</div>`
+      +tripBadge
+      +`<div class="wcard-emoji">${emoji}</div>`
+      +`<div class="wcard-verdict">${esc(v.text)}</div>`
+      +`<div class="wcard-temps"><span class="wcard-hi">${Math.round(x.hi)}°</span><span class="wcard-lo">${Math.round(x.lo)}°</span></div>`
+      +(x.pop!=null?`<div class="wcard-pop">💧 ${x.pop}%</div>`:'')
+      +`</button>`;
+  }).join('');
+  const a=new Date(ts+'T12:00:00'), b=new Date(te+'T12:00:00');
+  const tripShort=`${MO[a.getMonth()]} ${a.getDate()}–${b.getDate()}`;
+  return `<div class="card-title">🌡️ ${esc(place)} weather</div>`
+    +`<div class="weather-strip-label">Right now</div>`
+    +`<div class="weather-now"><div class="wn-emoji">${curEmoji}</div>`
+    +`<div class="wn-temp">${Math.round(cur.temperature_2m)}°</div>`
+    +`<div class="wn-meta"><div class="wn-verdict verdict-${nowV.cat}">${esc(nowV.text)}</div>`
+    +`<div class="wn-sub">${esc(curLabel)} · feels ${Math.round(cur.apparent_temperature)}° · ${Math.round(cur.relative_humidity_2m)}% humidity</div>`
+    +`</div></div>`
+    +`<div class="weather-strip-label">The next 10 days`
+    +`<span class="weather-strip-hint"> · tap a day for hourly</span></div>`
+    +`<div class="weather-carousel">${cards}</div>`
+    +`<div class="hourly-wrap"></div>`
+    +(showingTrip?'':`<p class="weather-mini-note">${tripShort} forecast lands about two weeks out.</p>`);
+}
+/* tap a day -> hourly drawer below the strip (sibling, never inside the card);
+   tap again to collapse, tap another to swap in place */
+function toggleWxDay(btn){
+  const wx=btn.closest('.wx');
+  if(!wx||!wx._wxH) return;
+  const date=btn.dataset.date;
+  const panel=wx.querySelector('.hourly-wrap');
+  const wasOpen=btn.classList.contains('wcard-sel');
+  wx.querySelectorAll('.wcard-sel').forEach(b=>{b.classList.remove('wcard-sel');b.setAttribute('aria-expanded','false');});
+  if(wasOpen){panel.innerHTML='';return;}
+  const H=wx._wxH, slots=[];
+  for(let i=0;i<H.time.length;i++){
+    if(H.time[i].slice(0,10)!==date) continue;
+    const hr=+H.time[i].slice(11,13);
+    if(hr<8||hr%2!==0) continue;
+    slots.push({hr,temp:Math.round(H.temperature_2m[i]),
+      pop:H.precipitation_probability?H.precipitation_probability[i]:null,
+      emoji:describeWx(H.weather_code?H.weather_code[i]:null)[1]});
+  }
+  if(!slots.length) return;
+  const fmt=hr=>hr===12?'12P':hr<12?hr+'A':(hr-12)+'P';
+  panel.innerHTML=`<div class="hourly">${slots.map(s=>
+    `<div class="hourly-slot"><div class="hourly-hr">${fmt(s.hr)}</div>`
+    +`<div class="hourly-emoji">${s.emoji}</div>`
+    +`<div class="hourly-temp">${s.temp}°</div>`
+    +`<div class="hourly-pop${s.pop>=40?' wet':''}">${s.pop!=null?s.pop+'%':''}</div></div>`
+  ).join('')}</div>`;
+  btn.classList.add('wcard-sel');
+  btn.setAttribute('aria-expanded','true');
+}
+document.addEventListener('click',e=>{
+  const cell=e.target.closest('.wcard');
+  if(cell) toggleWxDay(cell);
+});
+function loadWx(){
+  document.querySelectorAll('.wx[data-wx]').forEach(el=>{
+    const [lat,lon]=el.dataset.wx.split('|');
+    fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}`
+      +`&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code`
+      +`&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max`
+      +`&hourly=temperature_2m,precipitation_probability,weather_code`
+      +`&temperature_unit=fahrenheit&timezone=auto&forecast_days=16`)
+      .then(r=>{ if(!r.ok) throw 0; return r.json(); })
+      .then(j=>{
+        el.innerHTML=wxInner(el,j);
+        el._wxH=j.hourly;
+        el.removeAttribute('data-wx');
+      })
+      .catch(()=>{ el.style.display='none'; });
+  });
+}
+
+const WXDOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+function renderTrips(){
+  let html='', lastMo='';
+  TRIPS.forEach((t,i)=>{
+    const a=d(t.start), [cls,label]=PILL[t.status];
+    const moKey=a.getFullYear()+'-'+a.getMonth();
+    if(moKey!==lastMo){ lastMo=moKey;
+      html+=`<div class="month-head">${a.toLocaleDateString('en-US',{month:'long',year:'numeric'})}</div>`; }
+    const pairs=flightPairs(t);
+    const days=(t.days&&t.days.length)
+      ? `<div class="days-card">${t.days.map((day,di)=>dayHtml(day,di,t,pairs)).join('')}</div>` : '';
+    html+=`<article class="trip" data-open="${i===0}">
+      <div class="trip-main">
+        <button class="trip-head" aria-expanded="${i===0}">
+          <span>
+            <span class="trip-title">${esc(t.title)}</span>
+            <span class="trip-dates">${range(t)} · ${esc(t.where)}</span>
+          </span>
+          <span class="trip-right"><span class="pill ${cls}">${label}</span><span class="chev">▶</span></span>
+        </button>
+        <div class="trip-body">
+          ${wxCard(t)}
+          ${t.who?`<div class="who"><b>Who:</b> ${esc(t.who)}</div>`:''}
+          ${days}
+          ${refsHtml(t.refs,!!(t.days&&t.days.length))}
+          ${t.notes?`<div class="notes"><span class="lbl">Notes</span>${esc(t.notes)}</div>`:''}
+        </div>
+      </div>
+    </article>`;
+  });
+  document.getElementById('tripList').innerHTML=html;
+  document.querySelectorAll('.trip-head').forEach(b=>b.addEventListener('click',()=>{
+    const art=b.closest('.trip'), open=art.dataset.open!=='true';
+    art.dataset.open=open; b.setAttribute('aria-expanded',open);
+  }));
+  loadWx();
+}
+/* ---------- tabs ---------- */
+function showTab(name){
+  const isTrips=name==='trips';
+  document.getElementById('tab-trips').setAttribute('aria-selected',isTrips);
+  document.getElementById('tab-todos').setAttribute('aria-selected',!isTrips);
+  document.getElementById('panel-trips').hidden=!isTrips;
+  document.getElementById('panel-todos').hidden=isTrips;
+  try{ localStorage.setItem('etd-tab',name); }catch(e){}
+  window.scrollTo(0,0);
+}
+document.getElementById('tab-trips').addEventListener('click',()=>showTab('trips'));
+document.getElementById('tab-todos').addEventListener('click',()=>showTab('todos'));
+
+/* ---------- persistence ---------- */
+const LS='etd-checklist';
+function saveLocal(){
+  try{ localStorage.setItem(LS,JSON.stringify({done:[...done],dropped:[...dropped]})); }catch(e){}
+}
+function loadLocal(){
+  try{
+    const r=JSON.parse(localStorage.getItem(LS)||'null');
+    if(r&&Array.isArray(r.done)){ done=new Set(r.done); dropped=new Set(r.dropped||[]); return true; }
+  }catch(e){}
+  return false;
+}
+function save(){ saveLocal(); flashSaved(); }
+
+function renderStale(){
+  const d = staleDays();
+  const bar = document.getElementById('stale-bar');
+  if(d !== null && d > 10){
+    bar.textContent = 'Last synced ' + d + ' days ago \u2014 this itinerary may be out of date';
+    bar.hidden = false;
+  } else {
+    bar.hidden = true;
+  }
+  const s = document.getElementById('syncedOn');
+  if(s && META.generatedAt){
+    const g = new Date(META.generatedAt + 'T12:00:00-07:00');
+    s.textContent = g.getDate() + ' ' + MO[g.getMonth()] + ' ' + g.getFullYear();
+  }
+}
+
+(async function boot(){
+  loadLocal();
+  const ok = await loadTrips();
+  if(!ok){
+    document.getElementById('hero').innerHTML =
+      '<div class="hero-eyebrow">Nothing cached</div>' +
+      '<div class="hero-count"><div class="hero-id">' +
+      '<div class="hero-name">No itinerary yet</div>' +
+      '<div class="hero-sub">Open this once with a signal and it stays available offline from then on.</div>' +
+      '</div></div>';
+    return;
+  }
+  renderStale();
+  renderHero(); renderTodos(); renderTrips();
+  try{ if(localStorage.getItem('etd-tab')==='todos') showTab('todos'); }catch(e){}
+})();
+</script>
+
+<script>
+window.__TD_BUILD = '__CACHE_TAG__';
+(function(){
+  function showUpdate(){
+    if(document.querySelector('.sw-toast')) return;
+    var t=document.createElement('div');
+    t.className='sw-toast'; t.setAttribute('role','status');
+    t.innerHTML='<span>New version available</span>';
+    var b=document.createElement('button');
+    b.className='sw-refresh'; b.textContent='Refresh';
+    b.onclick=function(){
+      function go(){ window.location.reload(); }
+      if(navigator.serviceWorker && navigator.serviceWorker.getRegistration){
+        navigator.serviceWorker.getRegistration().then(function(reg){
+          if(reg){ try{ reg.update(); }catch(e){} }
+          setTimeout(go, 900);
+        }).catch(go);
+      } else go();
+    };
+    t.appendChild(b); document.body.appendChild(t);
+  }
+  /* Independent version probe: the live sw.js always carries the newest
+     build tag and the worker never intercepts this fetch, so a stale page
+     can spot a newer build even if the worker lifecycle is stuck. One
+     automatic reload per tab session; the pill is the fallback so a wedged
+     state can never loop. Runs at load and on pageshow (covers tabs
+     restored from a frozen state, where load never fires). The module-level
+     claim flag keeps concurrent probes (load + pageshow) to a single
+     reload; sessionStorage carries it across the reload itself. */
+  var reloadClaimed = false;
+  try{ reloadClaimed = (window.sessionStorage.getItem('td-ar') === '1'); }
+  catch(e){ reloadClaimed = true; /* no session storage -> pill only, never loop */ }
+  function checkVersion(){
+    try{
+      fetch('sw.js').then(function(r){ return r.text(); }).then(function(t){
+        var m = t.match(/travel-desk-[a-f0-9]{12}/);
+        if(m && m[0] !== window.__TD_BUILD && !reloadClaimed){
+          reloadClaimed = true;
+          try{ sessionStorage.setItem('td-ar','1'); }catch(e){}
+          window.location.reload();
+          return;
+        }
+        if(m && m[0] !== window.__TD_BUILD) showUpdate();
+      }).catch(function(){});
+    }catch(e){}
+  }
+  checkVersion();
+  try{ window.addEventListener('pageshow', checkVersion); }catch(e){}
+  /* The installed PWA (standalone) can be resumed from a live process without
+     any navigation — no load, no pageshow — so a stale app would never probe.
+     visibilitychange covers "reopen the app", the main way a PWA goes stale. */
+  try{ document.addEventListener('visibilitychange', function(){ if(!document.hidden) checkVersion(); }); }catch(e){}
+  /* Version telemetry: report this client's build tag so future deploys can
+     be verified from the server side. Fire and forget. */
+  try{
+    var cid = null;
+    try{ cid = localStorage.getItem('td-cid'); }catch(e){}
+    if(!cid){
+      cid = Math.random().toString(36).slice(2) + Date.now().toString(36);
+      try{ localStorage.setItem('td-cid', cid); }catch(e){}
+    }
+    fetch('./api/ping', {method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({client: cid, build: window.__TD_BUILD})}).catch(function(){});
+  }catch(e){}
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('sw.js').then(function(reg){
+        /* a fresh worker finished installing while this page is still on the old one */
+        if(reg.waiting) showUpdate();
+        reg.addEventListener('updatefound',function(){
+          var w=reg.installing;
+          w.addEventListener('statechange',function(){
+            if(w.state==='installed'&&navigator.serviceWorker.controller) showUpdate();
+          });
+        });
+      }).catch(function(){});
+    });
+  }
+})();
+window.addEventListener('online', function(){ document.body.classList.remove('is-offline'); });
+window.addEventListener('offline', function(){ document.body.classList.add('is-offline'); });
+if(!navigator.onLine) document.body.classList.add('is-offline');
+</script>
+</body>
+</html>

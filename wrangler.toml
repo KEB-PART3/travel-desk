@@ -1,0 +1,10 @@
+name = "travel-desk"
+compatibility_date = "2026-09-21"
+pages_build_output_dir = "dist"
+
+# Password-gate credential store. Create a KV namespace in the Cloudflare
+# dashboard (Workers & Pages → KV) and paste its ID below. Each Travel Desk
+# owner gets their own namespace — never share one.
+[[kv_namespaces]]
+binding = "TD"
+id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
