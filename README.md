@@ -26,9 +26,14 @@ Give your agent this repo and say: *"Set up my Travel Desk."* Everything it need
 
 The agent's standing job: read your Gmail for booking confirmations, add trips once they have a hotel, flight, or calendar hold (booked travel only — not exploratory browsing), keep confirmation numbers on the item where you'd read them aloud (check-in, first flight), never invent unknown values (`Not found`, not a guess), and run `./deploy.sh` after changes. Deploy-day rule: schedule changes, cancellations, and expiring refund windows ship the same day.
 
+When the agent adds a hotel stay, it saves the property's official website in a `website` field on the stay item (see `SCHEMA.md`) — that's the one detail that unlocks automatic photos.
+
+**Imagery fills itself in.** Every `./deploy.sh` runs `autopopulate-images.py` first: any flight with a recognizable airline name gets the airline's official logo as its row icon, and any hotel stay with a `website` gets the property's own hero photo as a marquee card. It only acts when the details are sufficient — an unparseable airline or a stay with no website is skipped with a log line, never guessed at. Logo padding is measured automatically so the logo gate (below) passes in the same run. Anything it gets wrong is a one-line registry swap.
+
 **Photo guidelines** (they matter more than you'd think):
 
-- Hotel and resort photos must be *of the actual property*, sourced from the property's own website — never generic stock.
+- Hotel and resort photos must be *of the actual property*, sourced from the property's own website — never generic stock. (`autopopulate-images.py` uses the site's `og:image` hero photo for this.)
+- When adding a stay, save the property's official website in the item's `website` field — without it, no photo can be fetched automatically.
 - Branded events get the official logo; unbranded events get an evocative image.
 - A `photo` alone doesn't render — the item also needs `marquee: true` (hero card) or `banner: true` (slim card). ~2–3 marquees per trip max.
 - The marquee crops to ~2:1, 190px tall, centered. Audition candidates: simulate the crop and *look at it* before committing. Prefer landscape with the subject in the vertical center; portrait shots get decapitated.
@@ -50,9 +55,12 @@ SCHEMA.md             the data contract your agent follows
 img/                  your photos and logos, registered in PHOTOS
 functions/            password gate + login/setup API (Cloudflare Pages Functions)
 deploy.sh             logo gate → clean dist/ build → SW cache stamping → Pages deploy
+autopopulate-images.py  deploy-time imagery: airline logos + hotel photos for
+                        items with sufficient details (runs inside deploy.sh,
+                        before the logo gate)
 check-logos.py        fails the deploy if a logo would be clipped
 ```
 
 ## Privacy
 
-Your travel data lives in `trips.json` (git-ignored) and your Cloudflare KV (passphrase hash). Neither is in this repo. If a stranger could infer when your house is empty from something in the repo, it doesn't belong here.
+Your travel data lives in `trips.json` (git-ignored) and your Cloudflare KV (passphrase hash). Neither is in this repo. `img/` holds your photos and logos and *is* committed with the repo — if you'd rather keep it out, add `img/` to `.gitignore` (the app works the same; images just won't travel with clones). If a stranger could infer when your house is empty from something in the repo, it doesn't belong here.

@@ -24,6 +24,12 @@ if [ ! -f trips.json ]; then
   echo "Seeded trips.json from trips.example.json — replace it with your own trips."
 fi
 
+# Auto-imagery: fill in airline logos and hotel photos for items that have
+# enough details but no imagery yet. Idempotent — skips what's already set,
+# never guesses at what's ambiguous. Runs before the logo gate so freshly
+# fetched logos get their padding measured in the same run.
+./autopopulate-images.py
+
 # Logo clip check: fail before building anything if a logo's detail (text
 # especially) would be cut off by an avatar container. Pad values live in
 # the PHOTOS registry and are measured by the script — never guessed.

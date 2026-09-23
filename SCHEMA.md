@@ -64,6 +64,9 @@ Trips are ordered by `start`, soonest first. `trips[0]` is the hero card.
                                   // body. Row: 40px rounded-square chip at the row's start
   "banner": true                   // all-day item → slim photo banner card (photo required).
                                   // The time collapses away; the banner IS the all-day statement
+  "website": "https://www.examplehotel.com"  // optional, on stay items: the
+                                  // property's official website. autopopulate-images.py
+                                  // fetches the property's hero photo from it automatically.
 }
 ```
 
