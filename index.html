@@ -63,7 +63,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
 
 /* ============ masthead ============ */
 .masthead{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;
-  padding-block:22px 18px;border-bottom:1px solid var(--line);margin-bottom:22px}
+  padding-block:12px 10px;border-bottom:1px solid var(--line);margin-bottom:14px}
 .brand{font-weight:900;font-size:22px;letter-spacing:-.4px;color:var(--text)}
 .sync{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1.6px;font-weight:700}
 .sync b{color:var(--text-2)}
@@ -71,7 +71,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
 /* ============ hero — gold number, heavy lead, quiet detail ============ */
 .hero{background:linear-gradient(180deg,var(--card),var(--card-2));
   border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);
-  padding:20px 20px 18px;margin-bottom:24px}
+  padding:16px 18px 14px;margin-bottom:16px}
 .hero-eyebrow{font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
   color:var(--gold);margin-bottom:10px}
 .hero-count{display:flex;align-items:center;gap:14px}
@@ -88,22 +88,11 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .hero-next-k{font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
   color:var(--gold);flex-shrink:0}
 .hero-next-v{font-size:15px;font-weight:700;color:var(--text)}
-.hero-days{display:flex;gap:8px;overflow-x:auto;margin:14px -20px -18px;padding:2px 20px 18px;
-  scroll-snap-type:x mandatory;scroll-padding-left:20px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-.hero-days::-webkit-scrollbar{display:none}
-.hd{flex:0 0 auto;min-width:150px;scroll-snap-align:start;scroll-snap-stop:always;
-  background:var(--bg-2);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
-.hd-k{font-size:12px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;
-  color:var(--gold);margin-bottom:6px}
-.hd-l{font-size:13.5px;color:var(--text-2);line-height:1.6;display:block;
-  font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hd-l .t{color:var(--muted)}
-
 /* ============ tabs ============ */
-.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:20px}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:14px}
 .tab{appearance:none;background:none;border:0;border-bottom:2px solid transparent;
   font:inherit;font-size:13.5px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;
-  color:var(--muted);padding:10px 14px;cursor:pointer;margin-bottom:-1px}
+  color:var(--muted);padding:8px 10px;cursor:pointer;margin-bottom:-1px}
 .tab:hover{color:var(--text-2)}
 .tab[aria-selected="true"]{color:var(--text);border-bottom-color:var(--gold)}
 .tab:focus-visible{outline:2px solid var(--gold);outline-offset:-2px;border-radius:4px}
@@ -111,6 +100,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
   border:1px solid var(--line);border-radius:999px;padding:1px 7px;font-size:12px;
   letter-spacing:0;font-variant-numeric:tabular-nums;font-weight:800}
 .tab .badge:not(.calm){color:var(--red);border-color:color-mix(in srgb,var(--red) 45%,transparent)}
+.empty-note{color:var(--muted);font-size:14.5px;padding:18px 4px}
 
 .sec-head{display:flex;align-items:baseline;gap:10px;margin:0 0 12px}
 .sec-head h2{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:800}
@@ -414,11 +404,12 @@ body.is-offline .offline-bar{display:block}
   <div class="hero" id="hero"></div>
 
   <div class="tabs" role="tablist">
-    <button class="tab" id="tab-trips" role="tab" aria-selected="true" aria-controls="panel-trips">Trips</button>
+    <button class="tab" id="tab-upcoming" role="tab" aria-selected="true" aria-controls="panel-trips">Upcoming</button>
+    <button class="tab" id="tab-past" role="tab" aria-selected="false" aria-controls="panel-trips">Past Trips</button>
     <button class="tab" id="tab-todos" role="tab" aria-selected="false" aria-controls="panel-todos">To-dos <span class="badge" id="todoBadge">0</span></button>
   </div>
 
-  <div id="panel-trips" role="tabpanel" aria-labelledby="tab-trips">
+  <div id="panel-trips" role="tabpanel" aria-labelledby="tab-upcoming">
     <div class="trips" id="tripList"></div>
   </div>
 
@@ -479,6 +470,10 @@ const MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec
 const DOW=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const d=s=>new Date(s+'T12:00:00-07:00');
 const daysTo=s=>Math.round((d(s)-TODAY)/86400000);
+// Today's date as YYYY-MM-DD in the viewer's timezone. Past vs. current days
+// are split by plain date-string comparison — nothing is ever deleted from
+// the data; the Trips panel just shows each day in the right place.
+const todayStr=()=>{const n=new Date(),p=x=>String(x).padStart(2,'0');return `${n.getFullYear()}-${p(n.getMonth()+1)}-${p(n.getDate())}`;};
 function isoAdd(s,n){const[y,m,dd]=s.split('-').map(Number);return new Date(Date.UTC(y,m-1,dd+n)).toISOString().slice(0,10);}
 function range(t){
   const a=d(t.start),b=d(t.end);
@@ -495,8 +490,9 @@ const KIND={fly:'Flight',car:'Car',stay:'Stay',ticket:'Tickets',table:'Dinner',e
 let done=new Set(), dropped=new Set();
 
 /* ---------- hero ---------- */
-function nextEvent(t){
-  const day=(t.days||[])[0], it=day&&day.items&&day.items[0];
+function nextEvent(t,today){
+  const fwd=(t.days||[]).filter(day=>day.d>=today);
+  const day=fwd[0]||(t.days||[])[0], it=day&&day.items&&day.items[0];
   if(!it) return '';
   const dt=d(day.d);
   let s=`${DOW[dt.getDay()].slice(0,3)} ${MO[dt.getMonth()]} ${dt.getDate()}`;
@@ -505,15 +501,11 @@ function nextEvent(t){
 }
 function renderHero(){
   if(!TRIPS.length) return;
-  const t=TRIPS[0], n=Math.max(0,daysTo(t.start));
-  const cols=(t.days||[]).map(day=>{
-    const dt=d(day.d);
-    const lines=day.items.slice(0,4).map(it=>
-      `<span class="hd-l"><span class="t">${esc(it.time?it.time:'—')}</span> ${esc(it.title)}</span>`).join('');
-    return `<div class="hd">
-      <div class="hd-k">${DOW[dt.getDay()].slice(0,3)} ${MO[dt.getMonth()]} ${dt.getDate()}</div>${lines}</div>`;
-  }).join('');
-  const nx=nextEvent(t);
+  const today=todayStr();
+  // Spotlight the next trip that hasn't ended — the hero never shows a past trip.
+  const t=TRIPS.find(t=>t.end>=today)||TRIPS[0], n=Math.max(0,daysTo(t.start));
+  const inprog=t.start<=today&&t.end>=today;
+  const nx=nextEvent(t,today);
   // The countdown exists only while the trip is still coming. On departure
   // day it goes away entirely — the trip is here, not coming.
   const nLbl=n===1?'day out':'days out';
@@ -521,7 +513,7 @@ function renderHero(){
     ? `<div class="hero-numwrap"><div class="hero-num">${n}</div><div class="hero-nlbl">${nLbl}</div></div>`
     : '';
   document.getElementById('hero').innerHTML=`
-    <div class="hero-eyebrow">Next departure</div>
+    <div class="hero-eyebrow">${inprog?'Now traveling':'Next departure'}</div>
     <div class="hero-count">
       ${countHtml}
       <div class="hero-id">
@@ -529,8 +521,7 @@ function renderHero(){
         <div class="hero-sub">${range(t)} · ${esc(t.where)}</div>
       </div>
     </div>
-    ${nx?`<div class="hero-next"><span class="hero-next-k">Next up</span><span class="hero-next-v">${nx}</span></div>`:''}
-    ${cols?`<div class="hero-days">${cols}</div>`:''}`;
+    ${nx?`<div class="hero-next"><span class="hero-next-k">Next up</span><span class="hero-next-v">${nx}</span></div>`:''}`;
 }
 
 /* ---------- to-dos ---------- */
@@ -991,19 +982,20 @@ function loadWx(){
 }
 
 const WXDOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-function renderTrips(){
-  let html='', lastMo='';
-  TRIPS.forEach((t,i)=>{
-    const a=d(t.start), [cls,label]=PILL[t.status];
-    const moKey=a.getFullYear()+'-'+a.getMonth();
-    if(moKey!==lastMo){ lastMo=moKey;
-      html+=`<div class="month-head">${a.toLocaleDateString('en-US',{month:'long',year:'numeric'})}</div>`; }
-    const pairs=flightPairs(t);
-    const days=(t.days&&t.days.length)
-      ? `<div class="days-card">${t.days.map((day,di)=>dayHtml(day,di,t,pairs)).join('')}</div>` : '';
-    html+=`<article class="trip" data-open="${i===0}">
+/* Trip filter: the Upcoming and Past Trips tabs share the trips panel.
+   Upcoming shows trips that haven't ended with only their current and future
+   days; Past Trips shows every past day grouped under its trip header, most
+   recent trip first. Days are never deleted — they just move between the two
+   views as their dates pass. */
+let tripFilter='upcoming';
+function tripCard(t,days,open){
+  const a=d(t.start), [cls,label]=PILL[t.status];
+  const pairs=flightPairs(t);
+  const daysHtml=(days&&days.length)
+    ? `<div class="days-card">${days.map((day,di)=>dayHtml(day,di,t,pairs)).join('')}</div>` : '';
+  return `<article class="trip" data-open="${open}">
       <div class="trip-main">
-        <button class="trip-head" aria-expanded="${i===0}">
+        <button class="trip-head" aria-expanded="${open}">
           <span>
             <span class="trip-title">${esc(t.title)}</span>
             <span class="trip-dates">${range(t)} · ${esc(t.where)}</span>
@@ -1013,13 +1005,42 @@ function renderTrips(){
         <div class="trip-body">
           ${wxCard(t)}
           ${t.who?`<div class="who"><b>Who:</b> ${esc(t.who)}</div>`:''}
-          ${days}
-          ${refsHtml(t.refs,!!(t.days&&t.days.length))}
+          ${daysHtml}
+          ${refsHtml(t.refs,!!(days&&days.length))}
           ${t.notes?`<div class="notes"><span class="lbl">Notes</span>${esc(t.notes)}</div>`:''}
         </div>
       </div>
     </article>`;
-  });
+}
+function monthHead(dt,lastMo){
+  const moKey=dt.getFullYear()+'-'+dt.getMonth();
+  if(moKey===lastMo.v) return '';
+  lastMo.v=moKey;
+  return `<div class="month-head">${dt.toLocaleDateString('en-US',{month:'long',year:'numeric'})}</div>`;
+}
+function renderTrips(){
+  const today=todayStr();
+  // Split trips into upcoming and past.
+  const upcoming=TRIPS.filter(t=>t.end>=today);
+  const pastEntries=TRIPS
+    .map(t=>({t,past:(t.days||[]).filter(day=>day.d<today)}))
+    .filter(e=>e.past.length)
+    .sort((a,b)=>b.t.end<a.t.end?-1:b.t.end>a.t.end?1:0);
+  document.getElementById('tab-upcoming').textContent='Upcoming';
+  document.getElementById('tab-past').textContent='Past Trips';
+  let html=''; const lastMo={v:''};
+  if(tripFilter==='past'){
+    if(!pastEntries.length) html='<div class="empty-note">No past trips yet — finished days will collect here.</div>';
+    pastEntries.forEach((e,i)=>{
+      html+=monthHead(d(e.t.start),lastMo)+tripCard(e.t,e.past,false);
+    });
+  }else{
+    if(!upcoming.length) html='<div class="empty-note">No upcoming trips.</div>';
+    upcoming.forEach((t,i)=>{
+      const fwd=(t.days||[]).filter(day=>day.d>=today);
+      html+=monthHead(d(t.start),lastMo)+tripCard(t,fwd,i===0);
+    });
+  }
   document.getElementById('tripList').innerHTML=html;
   document.querySelectorAll('.trip-head').forEach(b=>b.addEventListener('click',()=>{
     const art=b.closest('.trip'), open=art.dataset.open!=='true';
@@ -1029,15 +1050,20 @@ function renderTrips(){
 }
 /* ---------- tabs ---------- */
 function showTab(name){
-  const isTrips=name==='trips';
-  document.getElementById('tab-trips').setAttribute('aria-selected',isTrips);
-  document.getElementById('tab-todos').setAttribute('aria-selected',!isTrips);
-  document.getElementById('panel-trips').hidden=!isTrips;
-  document.getElementById('panel-todos').hidden=isTrips;
+  // 'upcoming' and 'past' share the trips panel; the trip filter follows the tab.
+  tripFilter=name==='past'?'past':'upcoming';
+  const isTodos=name==='todos';
+  document.getElementById('tab-upcoming').setAttribute('aria-selected',name==='upcoming');
+  document.getElementById('tab-past').setAttribute('aria-selected',name==='past');
+  document.getElementById('tab-todos').setAttribute('aria-selected',isTodos);
+  document.getElementById('panel-trips').hidden=isTodos;
+  document.getElementById('panel-todos').hidden=!isTodos;
   try{ localStorage.setItem('etd-tab',name); }catch(e){}
+  renderTrips();
   window.scrollTo(0,0);
 }
-document.getElementById('tab-trips').addEventListener('click',()=>showTab('trips'));
+document.getElementById('tab-upcoming').addEventListener('click',()=>showTab('upcoming'));
+document.getElementById('tab-past').addEventListener('click',()=>showTab('past'));
 document.getElementById('tab-todos').addEventListener('click',()=>showTab('todos'));
 
 /* ---------- persistence ---------- */
@@ -1083,8 +1109,10 @@ function renderStale(){
     return;
   }
   renderStale();
-  renderHero(); renderTodos(); renderTrips();
-  try{ if(localStorage.getItem('etd-tab')==='todos') showTab('todos'); }catch(e){}
+  renderHero(); renderTodos();
+  let initTab='upcoming';
+  try{ const st=localStorage.getItem('etd-tab'); if(st==='past'||st==='todos') initTab=st; }catch(e){}
+  showTab(initTab);
 })();
 </script>
 

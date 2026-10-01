@@ -11,7 +11,16 @@ The page shell is fixed. **Only `trips.json` changes between deploys.**
 }
 ```
 
-Trips are ordered by `start`, soonest first. `trips[0]` is the hero card.
+Trips are ordered by `start`, soonest first. The hero card spotlights the next
+trip that hasn't ended — an in-progress trip is labeled "Now traveling".
+
+### Upcoming / Past Trips
+
+Days are never deleted. The **Upcoming** tab shows trips that haven't ended,
+with only their current and future days; **Past Trips** collects every elapsed
+day under its trip header, most recent trip first. Days move between the two
+views automatically as their dates pass — nothing is ever removed from the
+data. The selected tab persists in `localStorage`.
 
 ## Trip
 

@@ -38,6 +38,9 @@ When the agent adds a hotel stay, it saves the property's official website in a 
 - A `photo` alone doesn't render — the item also needs `marquee: true` (hero card) or `banner: true` (slim card). ~2–3 marquees per trip max.
 - The marquee crops to ~2:1, 190px tall, centered. Audition candidates: simulate the crop and *look at it* before committing. Prefer landscape with the subject in the vertical center; portrait shots get decapitated.
 - Logos render contain-fit on a light tile, never cropped. Run `./check-logos.py` after adding one — it measures the padding each logo needs and fails the deploy if a mark would clip.
+- Every stay's check-in is a full-bleed marquee hero: set `photo` (the property's best real photo) + `marquee: true` on the check-in item, with no `avatar` — the big image only, no small chip beneath it. Hotel heroes are exempt from the 2–3 marquee budget.
+
+**Past trips are kept, not pruned.** Days are never deleted from `trips.json`. The board splits them automatically: **Upcoming** shows current and future days; **Past Trips** collects elapsed days under their trip header, most recent first.
 
 ## Make it yours
 
