@@ -48,11 +48,15 @@ CONTAINERS = [
 
 
 def load_logos():
-    """Parse the PHOTOS registry out of index.html: name -> {file, pad}."""
-    s = open(os.path.join(HERE, 'index.html')).read()
+    """Parse the PHOTOS registry out of photos.js: name -> {file, pad}.
+    Falls back to photos.example.js on a fresh clone."""
+    path = os.path.join(HERE, 'photos.js')
+    if not os.path.exists(path):
+        path = os.path.join(HERE, 'photos.example.js')
+    s = open(path).read()
     m = re.search(r'(?:const|let|var)\s+PHOTOS\s*=\s*\{(.*?)\n\};', s, re.S)
     if not m:
-        print('PHOTOS registry not found in index.html', file=sys.stderr)
+        print('PHOTOS registry not found in photos.js', file=sys.stderr)
         sys.exit(2)
     block = m.group(1)
     # Strip JS comments so commented-out examples never parse as entries.

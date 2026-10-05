@@ -24,7 +24,7 @@ Give your agent this repo and say: *"Set up my Travel Desk."* Everything it need
 
 - **`SCHEMA.md`** — the data contract for `trips.json`. The page shell is fixed; only `trips.json` changes between deploys.
 - **`trips.example.json`** — the shape of a trip, a day, and the item kinds (`fly`, `car`, `stay`, `ticket`, `table`, `event`, `todo`).
-- **`index.html` → `PHOTOS` registry** — images are registered by key; events reference keys, never paths. Alt text is written from opening the file.
+- **`photos.js` → `PHOTOS` registry** — images are registered by key; events reference keys, never paths. Alt text is written from opening the file. Like `trips.json`, `photos.js` is yours: git-ignored, seeded from `photos.example.js` on first deploy, and the only file auto-imagery writes to — `index.html` is never modified per install.
 
 The agent's standing job: read your Gmail for booking confirmations, add trips once they have a hotel, flight, or calendar hold (booked travel only — not exploratory browsing), keep confirmation numbers on the item where you'd read them aloud (check-in, first flight), never invent unknown values (`Not found`, not a guess), and run `./deploy.sh` after changes. Deploy-day rule: schedule changes, cancellations, and expiring refund windows ship the same day.
 
@@ -56,6 +56,8 @@ When the agent adds a hotel stay, it saves the property's official website in a 
 index.html            the app shell (fixed — you edit data, not this)
 trips.json            your trips (git-ignored, never committed)
 trips.example.json    fabricated sample trips; seeds trips.json on first deploy
+photos.js             your PHOTOS image registry (git-ignored, never committed)
+photos.example.js     sample registry; seeds photos.js on first deploy
 SCHEMA.md             the data contract your agent follows
 img/                  your photos and logos, registered in PHOTOS
 functions/            password gate + login/setup API (Cloudflare Pages Functions)

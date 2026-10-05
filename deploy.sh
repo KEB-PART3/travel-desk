@@ -23,6 +23,10 @@ if [ ! -f trips.json ]; then
   cp trips.example.json trips.json
   echo "Seeded trips.json from trips.example.json — replace it with your own trips."
 fi
+if [ ! -f photos.js ]; then
+  cp photos.example.js photos.js
+  echo "Seeded photos.js from photos.example.js."
+fi
 
 # Auto-imagery: fill in airline logos and hotel photos for items that have
 # enough details but no imagery yet. Idempotent — skips what's already set,
@@ -38,7 +42,7 @@ fi
 DIST="$PWD/dist"
 rm -rf "$DIST"
 mkdir -p "$DIST/functions/api"
-cp index.html trips.json manifest.webmanifest login.html sw.js \
+cp index.html trips.json photos.js manifest.webmanifest login.html sw.js \
    icon-192.png icon-512.png icon-maskable-512.png apple-touch-icon.png \
    wrangler.toml "$DIST/"
 mkdir -p "$DIST/img"
@@ -49,7 +53,7 @@ cp functions/_middleware.js "$DIST/functions/"
 cp functions/api/_auth.js functions/api/login.js functions/api/setup.js \
    functions/api/ping.js "$DIST/functions/api/"
 
-HASH=$(cat "$DIST/index.html" "$DIST/trips.json" "$DIST/manifest.webmanifest" \
+HASH=$(cat "$DIST/index.html" "$DIST/trips.json" "$DIST/photos.js" "$DIST/manifest.webmanifest" \
        "$DIST/login.html" \
        "$DIST/functions/_middleware.js" "$DIST/functions/api/_auth.js" \
        "$DIST/functions/api/login.js" "$DIST/functions/api/setup.js" \
