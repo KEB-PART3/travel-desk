@@ -67,3 +67,5 @@ check-logos.py        fails the deploy if a logo would be clipped
 ## Privacy
 
 Your travel data lives in `trips.json` (git-ignored) and your Cloudflare KV (passphrase hash). Neither is in this repo. `img/` holds your photos and logos and *is* committed with the repo — if you'd rather keep it out, add `img/` to `.gitignore` (the app works the same; images just won't travel with clones). If a stranger could infer when your house is empty from something in the repo, it doesn't belong here.
+
+`/img/` and `/sw.js` are served without the password (the PWA needs them to install), and `sw.js` lists every image. Auto-populated images therefore get random filenames (`img/3f9c…e1.jpg`) so the public file list doesn't name your hotels. Name images you add by hand the same way — the readable name belongs in the PHOTOS key, not the filename.
