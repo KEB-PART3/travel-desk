@@ -67,7 +67,8 @@
   var blurb=document.getElementById('blurb'), form=document.getElementById('f'),
       pw=document.getElementById('pw'), go=document.getElementById('go'),
       err=document.getElementById('err'), toggle=document.getElementById('pw-toggle'),
-      needsSetup=false;
+      needsSetup=false,
+      setupToken=new URLSearchParams(location.search).get('setup')||'';
 
   toggle.addEventListener('click',function(){
     var show=pw.type==='password';
@@ -80,7 +81,10 @@
   fetch('/api/setup',{cache:'no-store'}).then(function(r){return r.json();})
     .then(function(j){
       needsSetup=!!j.needs_setup;
-      if(needsSetup){
+      if(needsSetup && j.token_required && !setupToken){
+        blurb.textContent='First run — open the setup link (/login?setup=…) to choose the password.';
+        go.disabled=true;
+      } else if(needsSetup){
         blurb.textContent='First run — choose a password (8+ characters). Nobody else ever sees it.';
         pw.setAttribute('autocomplete','new-password');
         pw.setAttribute('placeholder','Choose a password');
@@ -100,7 +104,7 @@
       return fetch('/api/login',{method:'POST',headers:headers,body:body,cache:'no-store'});
     }
     var first=needsSetup
-      ? fetch('/api/setup',{method:'POST',headers:headers,body:body,cache:'no-store'}).then(function(r){
+      ? fetch('/api/setup',{method:'POST',headers:Object.assign({'x-setup-token':setupToken},headers),body:body,cache:'no-store'}).then(function(r){
           if(!r.ok) throw new Error('setup');
           return doLogin();
         })

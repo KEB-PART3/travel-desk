@@ -9,10 +9,12 @@ Your upcoming travel on one offline-first board: flights, hotels, confirmation n
 **Prerequisites:** a Cloudflare account, Node.js, and an AI agent with Gmail/calendar access (Claude, Muse, or similar).
 
 1. **Create a KV namespace** in the Cloudflare dashboard (Workers & Pages → KV → Create). Paste its ID into `wrangler.toml` (`id = "…"`). Each owner gets their own namespace — never share one.
-2. **Create a Pages project** in the Cloudflare dashboard. Set a `COOKIE_SECRET` environment variable on it (any long random string).
+2. **Create a Pages project** in the Cloudflare dashboard. Set `COOKIE_SECRET` as an encrypted secret, 32+ characters: `openssl rand -base64 48 | npx wrangler pages secret put COOKIE_SECRET --project-name <project>`. The gate refuses to run with a missing or short secret. Rotating it signs out every device.
 3. **Install wrangler:** `npm i -g wrangler`, then `wrangler login`.
 4. **Deploy:** `./deploy.sh [your-pages-project-name]`
-5. **Set your passphrase:** open the deployed URL. First visit asks you to choose a passphrase (pick four uncommon words). It's hashed (PBKDF2, 100k iterations) into your KV — nobody handling deployment ever sees it. Login lasts 30 days per device.
+5. **Set your passphrase:** open the deployed URL. First visit asks you to choose a passphrase (pick five uncommon words). It's hashed (PBKDF2, 100k iterations) into your KV — nobody handling deployment ever sees it. Login lasts 30 days per device; changing the passphrase signs every device out.
+   - **Close the first-run window:** until you set it, whoever opens the URL first claims the passphrase. Set an optional `SETUP_TOKEN` secret before the first deploy and setup then only works from `/login?setup=<token>`.
+   - **Rate-limit logins:** the login endpoint only delays failed attempts; it does not count them. Add a Cloudflare rate-limiting rule (Security → WAF → Rate limiting rules) on path `/api/login`, e.g. 5 requests per 10 seconds per IP → block.
 
 `trips.json` is git-ignored. The repo ships `trips.example.json` (two fabricated trips); the first deploy seeds `trips.json` from it. Replace it with your real trips.
 
