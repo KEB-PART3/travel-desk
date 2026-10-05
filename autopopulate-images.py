@@ -26,6 +26,7 @@ import importlib.util
 import json
 import os
 import re
+import secrets
 import sys
 import urllib.parse
 import urllib.request
@@ -80,6 +81,18 @@ AIRLINE_DOMAINS = {
 UA = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) '
                     'AppleWebKit/537.36 (KHTML, like Gecko) '
                     'Chrome/120.0 Safari/537.36'}
+
+
+def opaque_name(ext):
+    """Random, non-guessable filename for img/. /img/ and the sw.js precache
+    list are public (no auth cookie needed), so a readable name like
+    stay-<hotel>.jpg would tell any visitor where you are staying. A hash of
+    the key would not help either — hotel names are guessable. The PHOTOS
+    key stays readable; it lives in the gated page, not the URL."""
+    while True:
+        name = secrets.token_hex(8) + ext
+        if not os.path.exists(os.path.join(IMG_DIR, name)):
+            return name
 
 
 def log(msg):
@@ -352,7 +365,7 @@ def main():
                         log(f"skip '{name}' logo — {src}")
                         skipped += 1
                         continue
-                    fname = f'{key}.png'
+                    fname = opaque_name('.png')
                     with open(os.path.join(IMG_DIR, fname), 'wb') as f:
                         f.write(png)
                     pad = measure_pad(os.path.join(IMG_DIR, fname))
@@ -396,7 +409,7 @@ def main():
                         log(f"skip stay '{place}' photo — {src}")
                         skipped += 1
                         continue
-                    fname = f'{key}{ext}'
+                    fname = opaque_name(ext)
                     with open(os.path.join(IMG_DIR, fname), 'wb') as f:
                         f.write(data_bytes)
                     alt = f'{place} — photo from the property\u2019s website'
