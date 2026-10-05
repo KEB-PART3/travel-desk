@@ -32,7 +32,8 @@ import urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 IMG_DIR = os.path.join(HERE, 'img')
-INDEX = os.path.join(HERE, 'index.html')
+REGISTRY = os.path.join(HERE, 'photos.js')
+REGISTRY_EXAMPLE = os.path.join(HERE, 'photos.example.js')
 TIMEOUT = 20
 MAX_MARQUEES_PER_TRIP = 3
 
@@ -238,9 +239,15 @@ def fetch_hotel_photo(website, place):
 # --------------------------------------------------------------- registry ---
 
 def load_registry():
-    s = open(INDEX).read()
+    if not os.path.exists(REGISTRY):
+        if not os.path.exists(REGISTRY_EXAMPLE):
+            log('photos.js and photos.example.js both missing — skipping registry writes')
+            return None
+        open(REGISTRY, 'w').write(open(REGISTRY_EXAMPLE).read())
+        log('seeded photos.js from photos.example.js')
+    s = open(REGISTRY).read()
     if not re.search(r'const\s+PHOTOS\s*=\s*\{(?:.*?\n)\};', s, re.S):
-        log('PHOTOS registry not found in index.html — skipping registry writes')
+        log('PHOTOS registry not found in photos.js — skipping registry writes')
         return None
     return s
 
@@ -411,7 +418,7 @@ def main():
                     log(f"added photo '{key}' from {src}")
 
     if dirty_html and html is not None:
-        open(INDEX, 'w').write(html)
+        open(REGISTRY, 'w').write(html)
     if dirty_data:
         with open(trips_path, 'w') as f:
             json.dump(data, f, indent=2, ensure_ascii=False)

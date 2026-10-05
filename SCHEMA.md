@@ -68,7 +68,7 @@ data. The selected tab persists in `localStorage`.
                                                          // opening Google Maps for the address. Omit when
                                                          // the location is unknown — never invent.
   "marquee": true,                 // promote to a full-bleed hero card (2–3 per trip max)
-  "photo":   "alumni-stadium",     // registry key in index.html PHOTOS → hero image
+  "photo":   "alumni-stadium",     // registry key in photos.js PHOTOS → hero image
   "avatar":  "bc-logo",            // registry key → badge. Marquee: 52px circle in the card
                                   // body. Row: 40px rounded-square chip at the row's start
   "banner": true                   // all-day item → slim photo banner card (photo required).

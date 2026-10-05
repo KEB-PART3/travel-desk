@@ -1,5 +1,7 @@
 # Your real trip data — never committed.
 trips.json
+# Your PHOTOS registry (generated per install; seeded from photos.example.js).
+photos.js
 
 # Build output
 dist/
