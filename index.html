@@ -672,7 +672,7 @@ function evTimeHtml(it){
     : `<span class="ev-time none">all day</span>`;
 }
 function evTitleHtml(it){
-  return `<div class="ev-t">${esc(it.title)}${it.kind?`<span class="kind">${esc(KIND[it.kind]||it.kind)}</span>`:''}</div>`;
+  return `<div class="ev-t">${esc(it.title)}${it.kind&&it.kind!=='event'?`<span class="kind">${esc(KIND[it.kind]||it.kind)}</span>`:''}</div>`;
 }
 /* everything a row carries below its title: place, description, actions, drawer */
 function evContentHtml(it,city){
@@ -743,7 +743,7 @@ function marqueeHtml(it,city,dayLabel){
     +`<div class="mq-scrim"></div><div class="mq-head"><div class="mq-when">${esc(when)}</div>`
     +`<div class="mq-title">${esc(it.title)}</div></div></div>`
     +`<div class="mq-body">${it.avatar?photoImg(it.avatar,'mq-avatar'):''}<div class="mq-main">`
-    +(it.kind?`<span class="mq-kind">${esc(KIND[it.kind]||it.kind)}</span>`:'')
+    +(it.kind&&it.kind!=='event'?`<span class="mq-kind">${esc(KIND[it.kind]||it.kind)}</span>`:'')
     +evContentHtml(it,city)+evRefsHtml(it)+`</div></div></div>`;
 }
 /* paired flight: takeoff + landing render as one row, anchored at takeoff */
