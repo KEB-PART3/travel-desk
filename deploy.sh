@@ -16,6 +16,11 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 PROJECT="${1:-${PAGES_PROJECT:-travel-desk}}"
+# Production branch for this Pages project (dashboard → Settings → Builds &
+# deployments → Production branch). Deploys must target it explicitly:
+# without --branch, `wrangler pages deploy` ships to a Preview URL and the
+# live site silently stays on the old build.
+PROD_BRANCH="${PROD_BRANCH:-main}"
 
 # First run: seed your real trips.json from the sample. trips.json is
 # git-ignored — your travel data never gets committed.
@@ -38,6 +43,17 @@ fi
 # especially) would be cut off by an avatar container. Pad values live in
 # the PHOTOS registry and are measured by the script — never guessed.
 ./check-logos.py
+
+# Stamp the publish date: the app's "last synced" indicator reads generatedAt
+# from trips.json. Without this, data edits ship but the date stays frozen and
+# the app eventually warns the itinerary may be out of date.
+python3 -c "
+import json, datetime
+p = 'trips.json'
+d = json.load(open(p))
+d['generatedAt'] = datetime.date.today().isoformat()
+json.dump(d, open(p, 'w'), indent=1, ensure_ascii=False)
+"
 
 DIST="$PWD/dist"
 rm -rf "$DIST"
@@ -91,7 +107,7 @@ if grep -q '__CACHE_TAG__' "$DIST/index.html"; then
   rm -f "$DIST/index.html.bak"
 fi
 
-npx wrangler pages deploy "$DIST" --project-name "$PROJECT"
+npx wrangler pages deploy "$DIST" --project-name "$PROJECT" --branch "$PROD_BRANCH"
 
 echo "Cache tag: ${TAG}"
 echo "Deployed to Pages project: ${PROJECT} (see wrangler output above for the URL)"
