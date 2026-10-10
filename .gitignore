@@ -1,0 +1,16 @@
+# Your real trip data — never committed.
+trips.json
+# Your PHOTOS registry (generated per install; seeded from photos.example.js).
+photos.js
+
+# Build output
+dist/
+
+# Cloudflare / wrangler local state
+.wrangler/
+
+# Python
+__pycache__/
+
+# Node
+node_modules/
