@@ -891,14 +891,33 @@ function tripDateList(ts,te){
   while(s<=te){out.push(s);s=isoAdd(s,1);}
   return out;
 }
+/* Which weather point is exposed follows the legs: the weather you pack
+   for is where you're heading. Destination of the most recent leg
+   (today's included); before any travel, the first leg's destination;
+   a point matches when one of its airport `codes` is that destination.
+   No codes or no match -> the first point, as before. */
+function wxExposedIdx(t,pts){
+  const today=todayStr();
+  const legs=[];
+  (t.days||[]).forEach(day=>{(day.items||[]).forEach(it=>{
+    if(it.kind!=='fly'||!it.route) return;
+    const m=it.route.match(/→\s*([A-Z]{3})/);
+    if(m) legs.push({d:day.d,to:m[1]});
+  });});
+  if(!legs.length) return 0;
+  let dest=null;
+  legs.forEach(l=>{ if(l.d<=today) dest=l.to; });
+  if(dest===null) dest=legs[0].to;
+  const idx=pts.findIndex(p=>(p.codes||[]).includes(dest));
+  return idx>=0?idx:0;
+}
 function wxCard(t){
   if(daysTo(t.start)>10||daysTo(t.end)<0) return '';
   // A trip may declare several weather points in `wx` ([{label, coords}]).
-  // Multi-place rule: the FIRST point is the destination and stays exposed —
-  // it's the packing/planning weather. The remaining points (e.g. where each
-  // traveller flies in from) are tap targets: pills that swap this card to
-  // that place's full forecast. Without `wx`, the single `coords` point is
-  // labelled by the trip's `where`, as before.
+  // Multi-place rule: ONE point stays exposed — chosen by wxExposedIdx,
+  // i.e. the current destination — and the rest are tap targets: pills
+  // that swap this card to that place's full forecast. Without `wx`, the
+  // single `coords` point is labelled by the trip's `where`, as before.
   const pts=(t.wx&&t.wx.length)?t.wx
     :(t.coords?[{label:t.where||'Forecast',coords:t.coords}]:[]);
   if(!pts.length) return '';
@@ -908,10 +927,11 @@ function wxCard(t){
     <div class="card-title">🌡️ ${esc(p.label)} weather</div>
     <div class="weather-loading">Checking the skies…</div></div>`;
   }
+  const ex=wxExposedIdx(t,pts);
   return `<div class="card wx-multi">
     <div class="card-title">🌡️ Weather</div>
-    <div class="wx-pills">${pts.map((p,i)=>`<button class="wx-pill${i===0?' on':''}" data-i="${i}">${esc(p.label)}</button>`).join('')}</div>
-    ${pts.map((p,i)=>`<div class="wx wx-pane${i===0?' on':''}" data-wx="${p.coords[0]}|${p.coords[1]}" data-ts="${t.start}" data-te="${t.end}" data-place="${esc(p.label)}" data-notitle="1"><div class="weather-loading">Checking the skies…</div></div>`).join('')}
+    <div class="wx-pills">${pts.map((p,i)=>`<button class="wx-pill${i===ex?' on':''}" data-i="${i}">${esc(p.label)}</button>`).join('')}</div>
+    ${pts.map((p,i)=>`<div class="wx wx-pane${i===ex?' on':''}" data-wx="${p.coords[0]}|${p.coords[1]}" data-ts="${t.start}" data-te="${t.end}" data-place="${esc(p.label)}" data-notitle="1"><div class="weather-loading">Checking the skies…</div></div>`).join('')}
   </div>`;
 }
 function wxInner(el,j){

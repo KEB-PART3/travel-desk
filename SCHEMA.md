@@ -44,6 +44,11 @@ data. The selected tab persists in `localStorage`.
                                       // pills on the weather card (e.g. each
                                       // traveller's departure city on a homecoming
                                       // trip). Labels are bare place names.
+                                      // A point may carry "codes": ["PDX"] — the
+                                      // airport codes that mean "heading here".
+                                      // The exposed point follows the trip's
+                                      // flight legs: the destination of the most
+                                      // recent leg is the one shown.
                                       // Overrides "coords" when present.
   "days":  [ ... ],                  // optional — omit for unbooked trips
   "refs":  [ ... ],                  // optional — undated facts only
