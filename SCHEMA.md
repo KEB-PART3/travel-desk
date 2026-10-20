@@ -37,6 +37,14 @@ data. The selected tab persists in `localStorage`.
                                       // Trips starting within 10 days show a live
                                       // "Pack for this" forecast strip. Omit when
                                       // the location is unknown — never invent.
+  "wx": [ ... ],                      // optional list of weather points:
+                                      // [{ "label": "Portland", "coords": [45.5152, -122.6784] }, ...]
+                                      // The first point is the destination and stays
+                                      // exposed; any extra points become tap-target
+                                      // pills on the weather card (e.g. each
+                                      // traveller's departure city on a homecoming
+                                      // trip). Labels are bare place names.
+                                      // Overrides "coords" when present.
   "days":  [ ... ],                  // optional — omit for unbooked trips
   "refs":  [ ... ],                  // optional — undated facts only
   "todos": [ ... ],

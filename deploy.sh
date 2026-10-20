@@ -44,6 +44,23 @@ fi
 # the PHOTOS registry and are measured by the script — never guessed.
 ./check-logos.py
 
+# JS syntax check: a broken inline script ships a dead app shell (a registry
+# insert missing a trailing comma is enough). Fail the deploy if any inline
+# script in index.html doesn't parse.
+python3 - <<'EOF'
+import re, subprocess, sys
+s = open('index.html').read()
+scripts = re.findall(r'<script(?![^>]*src=)[^>]*>(.*?)</script>', s, re.S)
+for i, sc in enumerate(scripts):
+    p = f'/tmp/td-syntax-{i}.js'
+    open(p, 'w').write(sc)
+    r = subprocess.run(['node', '--check', p], capture_output=True, text=True)
+    if r.returncode != 0:
+        print(f'FATAL: inline script {i} has a JS syntax error:\n' + r.stderr)
+        sys.exit(1)
+print(f'JS syntax OK ({len(scripts)} inline scripts)')
+EOF
+
 # Stamp the publish date: the app's "last synced" indicator reads generatedAt
 # from trips.json. Without this, data edits ship but the date stays frozen and
 # the app eventually warns the itinerary may be out of date.

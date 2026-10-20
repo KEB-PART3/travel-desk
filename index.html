@@ -88,6 +88,10 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .hero-next-k{font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
   color:var(--gold);flex-shrink:0}
 .hero-next-v{font-size:15px;font-weight:700;color:var(--text)}
+/* slim hero: shown once a trip has commenced — just the now/next strip;
+   the trip section below carries the full identity */
+.hero.slim{padding:12px 18px}
+.hero.slim .hero-next{margin-top:8px;padding-top:0;border-top:none}
 /* ============ tabs ============ */
 .tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:14px}
 .tab{appearance:none;background:none;border:0;border-bottom:2px solid transparent;
@@ -182,6 +186,15 @@ details.dismissed[open] summary::before{transform:rotate(90deg)}
 .weather-strip-label:first-of-type{margin-top:0}
 .weather-strip-hint{color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:none}
 .weather-mini-note{margin:10px 0 0;color:var(--muted);font-size:12px}
+/* multi-place weather: the first point is the destination and stays exposed;
+   the other places are tap-target pills that swap the card */
+.wx-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.wx-pill{appearance:none;border:1px solid var(--line);background:var(--card-2);
+  color:var(--text);font-size:13.5px;font-weight:700;border-radius:999px;
+  padding:7px 13px;cursor:pointer;font-family:inherit}
+.wx-pill.on{background:var(--gold);border-color:var(--gold);color:var(--bg);font-weight:900}
+.wx-pane{display:none}
+.wx-pane.on{display:block}
 .weather-now{display:flex;align-items:center;gap:12px}
 .wn-emoji{font-size:40px;line-height:1}
 .wn-temp{font-size:40px;font-weight:900;color:var(--gold-2);font-variant-numeric:tabular-nums;line-height:1}
@@ -507,13 +520,26 @@ function renderHero(){
   const t=TRIPS.find(t=>t.end>=today)||TRIPS[0], n=Math.max(0,daysTo(t.start));
   const inprog=t.start<=today&&t.end>=today;
   const nx=nextEvent(t,today);
+  const heroEl=document.getElementById('hero');
+  // Once a trip commences, the hero slims to a now/next strip — the trip
+  // section below carries the full identity (name, range, route), so the
+  // big spotlight treatment would just echo it. The full spotlight with
+  // countdown is for trips not yet started.
+  if(inprog){
+    heroEl.classList.add('slim');
+    heroEl.innerHTML=`
+    <div class="hero-eyebrow">Now traveling · ${esc(t.title)}</div>
+    ${nx?`<div class="hero-next"><span class="hero-next-k">Next up</span><span class="hero-next-v">${nx}</span></div>`:''}`;
+    return;
+  }
+  heroEl.classList.remove('slim');
   // The countdown exists only while the trip is still coming. On departure
   // day it goes away entirely — the trip is here, not coming.
   const nLbl=n===1?'day out':'days out';
   const countHtml=n>0
     ? `<div class="hero-numwrap"><div class="hero-num">${n}</div><div class="hero-nlbl">${nLbl}</div></div>`
     : '';
-  document.getElementById('hero').innerHTML=`
+  heroEl.innerHTML=`
     <div class="hero-eyebrow">${inprog?'Now traveling':'Next departure'}</div>
     <div class="hero-count">
       ${countHtml}
@@ -770,14 +796,17 @@ function flightHtml(dep,land){
     ${drawer}
   ${av?'</div>':''}</div>${refs?`<div class="ev-side">${refs}</div>`:''}</div>`;
 }
-/* group takeoff/landing legs by their shared flight id (first leg in doc order = takeoff) */
+/* group takeoff/landing legs by their shared flight id (first leg in doc order = takeoff).
+   The departure is keyed by the day's DATE, never its list position: the Upcoming
+   view renders a filtered day list (past days removed), so a positional index
+   shifts mid-trip and the remaining flights silently vanish. */
 function flightPairs(t){
   const map={};
   (t.days||[]).forEach((day,di)=>{(day.items||[]).forEach((it,ii)=>{
     if(!it.flight) return;
-    if(!map[it.flight]) map[it.flight]={dep:null,land:null,depDi:-1,depIi:-1};
+    if(!map[it.flight]) map[it.flight]={dep:null,land:null,depDate:null,depIi:-1};
     const p=map[it.flight];
-    if(!p.dep){p.dep=it;p.depDi=di;p.depIi=ii;}else if(!p.land){p.land=it;}
+    if(!p.dep){p.dep=it;p.depDate=day.d;p.depIi=ii;}else if(!p.land){p.land=it;}
   });});
   return map;
 }
@@ -788,7 +817,7 @@ function dayHtml(day,di,t,pairs){
   (day.items||[]).forEach((it,ii)=>{
     if(it.flight){
       const p=pairs[it.flight];
-      if(p&&p.depDi===di&&p.depIi===ii) items.push(flightHtml(p.dep,p.land));
+      if(p&&p.depDate===day.d&&p.depIi===ii) items.push(flightHtml(p.dep,p.land));
       return; /* landing legs never render alone — the pair renders at takeoff */
     }
     /* a banner item is promoted to a slim photo card; a marquee event to a
@@ -863,11 +892,27 @@ function tripDateList(ts,te){
   return out;
 }
 function wxCard(t){
-  if(!t.coords||daysTo(t.start)>10||daysTo(t.end)<0) return '';
-  const place=esc(t.where||'Forecast');
-  return `<div class="card wx" data-wx="${t.coords[0]}|${t.coords[1]}" data-ts="${t.start}" data-te="${t.end}" data-place="${place}">
-    <div class="card-title">🌡️ ${place} weather</div>
+  if(daysTo(t.start)>10||daysTo(t.end)<0) return '';
+  // A trip may declare several weather points in `wx` ([{label, coords}]).
+  // Multi-place rule: the FIRST point is the destination and stays exposed —
+  // it's the packing/planning weather. The remaining points (e.g. where each
+  // traveller flies in from) are tap targets: pills that swap this card to
+  // that place's full forecast. Without `wx`, the single `coords` point is
+  // labelled by the trip's `where`, as before.
+  const pts=(t.wx&&t.wx.length)?t.wx
+    :(t.coords?[{label:t.where||'Forecast',coords:t.coords}]:[]);
+  if(!pts.length) return '';
+  if(pts.length===1){
+    const p=pts[0];
+    return `<div class="card wx" data-wx="${p.coords[0]}|${p.coords[1]}" data-ts="${t.start}" data-te="${t.end}" data-place="${esc(p.label)}">
+    <div class="card-title">🌡️ ${esc(p.label)} weather</div>
     <div class="weather-loading">Checking the skies…</div></div>`;
+  }
+  return `<div class="card wx-multi">
+    <div class="card-title">🌡️ Weather</div>
+    <div class="wx-pills">${pts.map((p,i)=>`<button class="wx-pill${i===0?' on':''}" data-i="${i}">${esc(p.label)}</button>`).join('')}</div>
+    ${pts.map((p,i)=>`<div class="wx wx-pane${i===0?' on':''}" data-wx="${p.coords[0]}|${p.coords[1]}" data-ts="${t.start}" data-te="${t.end}" data-place="${esc(p.label)}" data-notitle="1"><div class="weather-loading">Checking the skies…</div></div>`).join('')}
+  </div>`;
 }
 function wxInner(el,j){
   const ts=el.dataset.ts, te=el.dataset.te, place=el.dataset.place;
@@ -903,7 +948,7 @@ function wxInner(el,j){
   }).join('');
   const a=new Date(ts+'T12:00:00'), b=new Date(te+'T12:00:00');
   const tripShort=`${MO[a.getMonth()]} ${a.getDate()}–${b.getDate()}`;
-  return `<div class="card-title">🌡️ ${esc(place)} weather</div>`
+  return (el.dataset.notitle?'':`<div class="card-title">🌡️ ${esc(place)} weather</div>`)
     +`<div class="weather-strip-label">Right now</div>`
     +`<div class="weather-now"><div class="wn-emoji">${curEmoji}</div>`
     +`<div class="wn-temp">${Math.round(cur.temperature_2m)}°</div>`
@@ -949,6 +994,16 @@ function toggleWxDay(btn){
 document.addEventListener('click',e=>{
   const cell=e.target.closest('.wcard');
   if(cell) toggleWxDay(cell);
+});
+/* multi-place weather: a pill tap swaps which place's forecast the card shows */
+document.addEventListener('click',e=>{
+  const pill=e.target.closest('.wx-pill');
+  if(!pill) return;
+  const card=pill.closest('.wx-multi');
+  if(!card) return;
+  const i=+pill.dataset.i;
+  card.querySelectorAll('.wx-pill').forEach(b=>b.classList.toggle('on',b===pill));
+  card.querySelectorAll('.wx-pane').forEach((p,j)=>p.classList.toggle('on',j===i));
 });
 function loadWx(){
   document.querySelectorAll('.wx[data-wx]').forEach(el=>{
