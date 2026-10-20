@@ -273,8 +273,13 @@ def registry_add(s, key, entry_js):
     """Insert a new entry before the closing }; of PHOTOS. Re-anchors on
     every call so repeated inserts stay correct."""
     m = re.search(r'(const\s+PHOTOS\s*=\s*\{(?:.*?\n))\};', s, re.S)
+    head, tail = s[:m.end(1)], s[m.end(1):]
+    # The previous last entry must end with a comma or the insert is a
+    # syntax error (2026-10-18: this exact bug nuked the personal app shell).
+    if head.rstrip().endswith('}') and not head.rstrip().endswith('},'):
+        head = head.rstrip() + ',\n'
     insertion = f"  /* auto-populated by autopopulate-images.py */\n  {entry_js}\n"
-    return s[:m.end(1)] + insertion + s[m.end(1):]
+    return head + insertion + tail
 
 
 def measure_pad(path):
